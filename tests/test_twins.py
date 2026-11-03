@@ -10,3 +10,10 @@ def test_closest_same_family_twin_wins():
     df = pd.DataFrame(rows, columns=["taxon", "inchikey", "family"])
     out = build_twins(df, ["A"], {"A": "Fam"})
     assert list(out.twin) == ["B"] and out.similarity[0] == round(8 / 11, 3)
+
+
+def test_status_default_is_not_read_back_as_missing(tmp_path):
+    rows = [("A", f"{i:014d}XX", "F") for i in range(6)] + [("B", f"{i:014d}XX", "F") for i in range(6)]
+    out = build_twins(pd.DataFrame(rows, columns=["taxon", "inchikey", "family"]), ["A"], {"A": "F"})
+    out.to_csv(tmp_path / "t.csv", index=False)
+    assert pd.read_csv(tmp_path / "t.csv").twin_iucn_status.notna().all()  # "NA" would come back as NaN -> shown as None

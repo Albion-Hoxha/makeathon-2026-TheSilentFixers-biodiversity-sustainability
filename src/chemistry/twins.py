@@ -1,6 +1,6 @@
 """Chemical twins: LOTUS compounds (via Wikidata) -> Jaccard similarity -> outputs/twins.csv.
 Run: python -m src.chemistry.twins   (step 1 downloads data/lotus_compounds.csv, step 2 builds twins)
-Optional data/iucn_status.csv (columns taxon,status) fills twin_iucn_status; otherwise 'NA'.
+Optional data/iucn_status.csv (columns taxon,status) fills twin_iucn_status; otherwise 'not assessed'.
 """
 import os
 import pandas as pd, requests
@@ -38,7 +38,7 @@ def build_twins(comp: pd.DataFrame, species, family_of, status=None, top=5) -> p
             cand.append((t, len(s & sets[sp]) / len(s | sets[sp])))
         for t, sim in sorted(cand, key=lambda x: -x[1])[:top]:
             rows.append(dict(species=sp, twin=t, similarity=round(sim, 3),
-                             twin_iucn_status=(status or {}).get(t, "NA")))
+                             twin_iucn_status=(status or {}).get(t, "not assessed")))
     return pd.DataFrame(rows, columns=["species", "twin", "similarity", "twin_iucn_status"])
 
 
