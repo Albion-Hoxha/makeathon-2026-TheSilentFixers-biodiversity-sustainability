@@ -1,0 +1,11 @@
+pandas
+numpy
+requests
+scikit-learn
+rasterio
+geopandas
+elapid
+rdkit
+streamlit
+folium
+streamlit-folium
