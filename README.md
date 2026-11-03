@@ -7,6 +7,9 @@ Where will Balkan medicinal plants lose their habitat by 2050, and which chemica
 ```bash
 pip install -r requirements.txt
 python -m src.climate.fetch_gbif     # -> data/occurrences.csv
+python -m src.climate.sdm            # needs data/climate/current.tif + future_*.tif -> outputs/risk.csv + maps
+python -m src.chemistry.twins        # -> data/lotus_compounds.csv, outputs/twins.csv
+python -m pytest -q                  # tests on synthetic data
 streamlit run app/app.py             # dashboard (shows SAMPLE DATA banner until outputs/risk.csv exists)
 ```
 
@@ -18,6 +21,12 @@ streamlit run app/app.py             # dashboard (shows SAMPLE DATA banner until
 | Albion (lead) | integration, deploy, Devpost, video | |
 
 Species and region live in `src/config.py`. Put climate code in `src/climate/`, chemistry in `src/chemistry/`.
+
+## Climate rasters (not in git)
+Download WorldClim 2.1 bioclim (2.5 arcmin) for the current climate, and CMIP6 2041-2060 (SSP2-4.5 and SSP5-8.5, 2-3 GCMs). Each file must be ONE multi-band GeoTIFF with the 19 bio variables in the same band order. Save as `data/climate/current.tif` and `data/climate/future_<scenario>_<gcm>.tif` (the WorldClim future files are already multi-band; for the current climate stack the 19 `bio_*.tif` files, e.g. `gdal_merge.py -separate`).
+
+## Method notes
+Random Forest presence/background model (not MaxEnt: fewer dependencies, same idea), one presence per 2.5' cell, 5000 background cells, 1-degree spatial block CV for AUC, suitability threshold = 10th percentile of held-out presences. Twins: Jaccard similarity on InChIKey skeletons (first 14 chars) between species of the same family, at least 5 compounds each.
 
 ## Data and licences
 GBIF (CC0/CC-BY), WorldClim 2.1 (CC-BY 4.0), LOTUS (CC0), IUCN Red List and WDPA (non-commercial terms, cite).

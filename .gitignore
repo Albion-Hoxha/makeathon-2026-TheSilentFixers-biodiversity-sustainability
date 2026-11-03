@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# big climate rasters (download locally, never commit)
+data/climate/*.tif
+data/climate/*.zip
