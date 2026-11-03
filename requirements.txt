@@ -3,9 +3,6 @@ numpy
 requests
 scikit-learn
 rasterio
-geopandas
-elapid
-rdkit
+matplotlib
 streamlit
-folium
-streamlit-folium
+pytest
