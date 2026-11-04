@@ -1,0 +1,26 @@
+species,twin,similarity,twin_iucn_status,ema_evidence
+Salvia officinalis,Rosmarinus officinalis,0.29,not assessed,traditional use
+Salvia officinalis,Salvia tomentosa,0.235,not assessed,no EU monograph
+Salvia officinalis,Ocimum basilicum,0.198,not assessed,no EU monograph
+Salvia officinalis,Origanum vulgare,0.192,not assessed,no EU monograph
+Salvia officinalis,Salvia fruticosa,0.166,not assessed,no EU monograph
+Gentiana lutea,Gentianella campestris,0.275,not assessed,no EU monograph
+Gentiana lutea,Gentiana orbicularis,0.258,not assessed,no EU monograph
+Gentiana lutea,Gentianella serotina,0.258,not assessed,no EU monograph
+Gentiana lutea,Gentianopsis barbata,0.258,not assessed,no EU monograph
+Gentiana lutea,Gentianopsis barbellata,0.258,not assessed,no EU monograph
+Arnica montana,Arnica chamissonis,0.114,not assessed,no EU monograph
+Arnica montana,Arnica longifolia,0.099,not assessed,no EU monograph
+Arnica montana,Echinacea angustifolia,0.096,not assessed,traditional use
+Arnica montana,Taraxacum officinale,0.087,not assessed,traditional use
+Arnica montana,Saussurea involucrata,0.087,not assessed,no EU monograph
+Origanum vulgare,Thymus longicaulis,0.281,not assessed,no EU monograph
+Origanum vulgare,Origanum dictamnus,0.269,not assessed,traditional use
+Origanum vulgare,Ocimum basilicum,0.264,not assessed,no EU monograph
+Origanum vulgare,Thymus longiflorus,0.253,not assessed,no EU monograph
+Origanum vulgare,Ocimum gratissimum,0.242,not assessed,no EU monograph
+Hypericum perforatum,Hypericum maculatum,0.221,not assessed,no EU monograph
+Hypericum perforatum,Hypericum olympicum,0.146,not assessed,no EU monograph
+Hypericum perforatum,Hypericum perfoliatum,0.126,not assessed,no EU monograph
+Hypericum perforatum,Hypericum androsaemum,0.118,not assessed,no EU monograph
+Hypericum perforatum,Hypericum tomentosum,0.111,not assessed,no EU monograph
