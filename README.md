@@ -28,6 +28,10 @@ Download WorldClim 2.1 bioclim (2.5 arcmin) for the current climate, and CMIP6 2
 ## Method notes
 Random Forest presence/background model (not MaxEnt: fewer dependencies, same idea), one presence per 2.5' cell, 5000 background cells, 1-degree spatial block CV for AUC, suitability threshold = 10th percentile of held-out presences. Twins: Jaccard similarity on InChIKey skeletons (first 14 chars) between species of the same family, at least 5 compounds each.
 
+## Species and a data-gap finding
+Modelled species: *Salvia officinalis, Gentiana lutea, Arnica montana, Origanum vulgare, Hypericum perforatum*.
+*Sideritis scardica* (Greek/Balkan mountain tea) was planned but cannot be modelled: on 2026-11-04 GBIF had 43 records in our region (23 usable after quality filters, below our minimum of 30) and LOTUS/Wikidata only 2 compounds (minimum 5). We report this as a data gap rather than force a model on too little data.
+
 ## Data and licences
 GBIF (CC0/CC-BY), WorldClim 2.1 (CC-BY 4.0), LOTUS (CC0), IUCN Red List and WDPA (non-commercial terms, cite).
 
