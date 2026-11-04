@@ -1,5 +1,5 @@
 """Styling + small HTML helpers for the dashboard. All HTML is single-line so Streamlit's markdown does not treat it as code."""
-import base64, html
+import base64, functools, html
 from pathlib import Path
 
 e = html.escape
@@ -45,6 +45,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',serif!important;color:var(--txt)}
 </style>"""
 
 
+@functools.lru_cache(maxsize=32)  # photos are inlined as base64; encode once per process
 def img_data(path):
     p = Path(path)
     if not p.exists():
@@ -53,7 +54,7 @@ def img_data(path):
 
 
 def hero(title, sub, tag, bg=None):
-    style = f' style="background-image:linear-gradient(180deg,rgba(3,20,17,.25),rgba(3,20,17,.88)),url({bg});background-size:cover"' if bg else ""
+    style = f' style="background-image:linear-gradient(180deg,rgba(3,20,17,.25),rgba(3,20,17,.88)),url({bg});background-size:cover;background-position:center 18%"' if bg else ""
     return f'<div class="hero{"" if bg else " plain"}"{style}><span class="tag">{e(tag)}</span><h1>{e(title)}</h1><p>{e(sub)}</p></div>'
 
 

@@ -1,0 +1,44 @@
+{
+ "Salvia officinalis": {
+  "file": "Salvia officinalis.jpg",
+  "title": "Salvia_officinalis0.jpg",
+  "author": "Kurt Stüber [1]",
+  "licence": "CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Salvia_officinalis0.jpg"
+ },
+ "Gentiana lutea": {
+  "file": "Gentiana lutea.jpg",
+  "title": "Gentiana_lutea_090705.jpg",
+  "author": "Bernd Haynold",
+  "licence": "CC BY-SA 2.5",
+  "page": "https://commons.wikimedia.org/wiki/File:Gentiana_lutea_090705.jpg"
+ },
+ "Arnica montana": {
+  "file": "Arnica montana.jpg",
+  "title": "Arnica_montana_-_Köhler–s_Medizinal-Pflanzen-015.jpg",
+  "author": "Franz Eugen Köhler, Köhlers Medizinal-Pflanzen",
+  "licence": "Public domain",
+  "page": "https://commons.wikimedia.org/wiki/File:Arnica_montana_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-015.jpg"
+ },
+ "Origanum vulgare": {
+  "file": "Origanum vulgare.jpg",
+  "title": "Origanum_vulgare_-_harilik_pune.jpg",
+  "author": "Ivar Leidus",
+  "licence": "CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Origanum_vulgare_-_harilik_pune.jpg"
+ },
+ "Hypericum perforatum": {
+  "file": "Hypericum perforatum.jpg",
+  "title": "(MHNT)_Hypericum_perforatum_flower_and_buttons.jpg",
+  "author": "Didier Descouens",
+  "licence": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:(MHNT)_Hypericum_perforatum_flower_and_buttons.jpg"
+ },
+ "hero": {
+  "file": "hero.jpg",
+  "title": "Small_Turk_and_Titov_Vrv.jpg",
+  "author": "Vojkan Nedkovski",
+  "licence": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Small_Turk_and_Titov_Vrv.jpg"
+ }
+}

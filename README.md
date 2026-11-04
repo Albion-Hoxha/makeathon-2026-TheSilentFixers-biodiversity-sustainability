@@ -33,7 +33,7 @@ Modelled species: *Salvia officinalis, Gentiana lutea, Arnica montana, Origanum 
 *Sideritis scardica* (Greek/Balkan mountain tea) was planned but cannot be modelled: on 2026-11-04 GBIF had 43 records in our region (23 usable after quality filters, below our minimum of 30) and LOTUS/Wikidata only 2 compounds (minimum 5). We report this as a data gap rather than force a model on too little data.
 
 ## Dashboard (app/)
-`streamlit run app/app.py`: 7 pages (Overview, Species Explorer, Climate Explorer, Chemical Twins, Risk Analytics, Conservation, Data & Methods). Every number is read from `outputs/risk.csv`, `risk_scenarios.csv` and `twins.csv`; without them it shows `outputs/sample_*.csv` under a SAMPLE DATA banner. Optional images: `app/assets/hero.jpg` and `app/assets/species/<Species name>.jpg` (use only photos with a licence that allows it and credit them in the README).
+`streamlit run app/app.py`: 7 pages (Overview, Species Explorer, Climate Explorer, Chemical Twins, Risk Analytics, Conservation, Data & Methods). Every number is read from `outputs/risk.csv`, `risk_scenarios.csv` and `twins.csv`; without them it shows `outputs/sample_*.csv` under a SAMPLE DATA banner. Photos (Wikimedia Commons, CC BY-SA / public domain) are in `app/assets/`, fetched by `scripts/fetch_assets.py`; credits are listed on the Data & Methods page (`app/assets/credits.json`). The Observed-records map uses GBIF occurrences (`app/assets/occurrences.csv`, or `data/occurrences.csv` when present), downloaded 2026-11-04.
 
 ## Data and licences
 GBIF (CC0/CC-BY), WorldClim 2.1 (CC-BY 4.0), LOTUS (CC0), IUCN Red List and WDPA (non-commercial terms, cite).

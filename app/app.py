@@ -1,7 +1,7 @@
 """Vanishing Apothecary dashboard. Run: streamlit run app/app.py
 Reads outputs/risk.csv, risk_scenarios.csv (optional), twins.csv; falls back to outputs/sample_*.csv with a visible banner.
 Every number shown comes from those files; nothing is hardcoded."""
-import math, os, sys
+import json, math, os, sys
 from pathlib import Path
 import pandas as pd
 import plotly.graph_objects as go
@@ -93,14 +93,36 @@ def species_card(r, show_bars=True):
             f'<p>{fmt(r.n_records)} GBIF records · {fmt(r.area_now_km2, "{:,.0f}")} km² suitable now → {fmt(r.area_2050_km2, "{:,.0f}")} km² in 2041–2060</p>{bars}</div></div></div>')
 
 
+def occurrences():
+    for p in (ROOT / "data" / "occurrences.csv", ROOT / "app" / "assets" / "occurrences.csv"):
+        if p.exists():
+            return pd.read_csv(p)
+
+
+def occ_map(sp_):
+    d = occurrences()
+    d = d[d.species == sp_] if d is not None else None
+    if d is None or d.empty:
+        st.markdown('<div class="empty">No GBIF records bundled for this species.</div>', unsafe_allow_html=True)
+        return
+    fig = go.Figure(go.Scattermap(lat=d.lat, lon=d.lon, mode="markers", marker=dict(size=6, color="#20C979", opacity=.65), hoverinfo="skip"))
+    fig.update_layout(map=dict(style="carto-darkmatter", center=dict(lat=43.2, lon=19.5), zoom=5))
+    st.plotly_chart(T.style(fig, 430), use_container_width=True)
+    st.caption(f"{len(d):,} observed GBIF records (CC0 / CC-BY, downloaded 2026-11-04). These are observations, not modelled habitat.")
+
+
 def maps(sp_):
-    a, b = OUT / "maps" / f"{sp_}_now.png", OUT / "maps" / f"{sp_}_2050.png"
-    if a.exists() and b.exists():
-        c1, c2 = st.columns(2)
-        c1.image(str(a), caption="Suitable habitat, current climate")
-        c2.image(str(b), caption="2041–2060: share of scenarios calling the cell suitable")
-    else:
-        st.markdown('<div class="empty">Maps appear after <code>python -m src.climate.sdm</code> has run for this species.</div>', unsafe_allow_html=True)
+    t1, t2 = st.tabs(["Observed records (GBIF)", "Modelled habitat"])
+    with t1:
+        occ_map(sp_)
+    with t2:
+        a, b = OUT / "maps" / f"{sp_}_now.png", OUT / "maps" / f"{sp_}_2050.png"
+        if a.exists() and b.exists():
+            c1, c2 = st.columns(2)
+            c1.image(str(a), caption="Suitable habitat, current climate")
+            c2.image(str(b), caption="2041–2060: share of scenarios calling the cell suitable")
+        else:
+            st.markdown('<div class="empty">Modelled maps appear after <code>python -m src.climate.sdm</code> has run for this species.</div>', unsafe_allow_html=True)
 
 
 def network(sp_, tw_):
@@ -242,6 +264,12 @@ else:  # Data & Methods
     with st.expander("Limitations"):
         st.markdown("GBIF sampling bias; climate-model disagreement (see scenario ranges); habitat suitability is not abundance or extinction risk; "
                     "chemical similarity is not medicinal equivalence. Nothing here is medical advice.")
+    credits = ROOT / "app" / "assets" / "credits.json"
+    if credits.exists():
+        with st.expander("Photo credits (Wikimedia Commons)"):
+            for k, v in json.loads(credits.read_text()).items():
+                if v:
+                    st.markdown(f"- **{k}**: {v['author']}, {v['licence']}, [{v['title']}]({v['page']})")
     with st.expander("AI usage"):
         st.markdown("Claude (Anthropic) and GitHub Copilot assisted with code and documentation. The team reviews all results.")
     st.code("python -m src.climate.fetch_gbif\npython -m src.climate.sdm\npython -m src.chemistry.twins\nstreamlit run app/app.py", language="bash")
