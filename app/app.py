@@ -11,7 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 import theme as T
-from src.config import DATA_GAP, FAMILY
+from src.chemistry.ema import ema_label, load_ema
+from src.config import AUTHORITY, DATA_GAP, FAMILY
 
 OUT = Path(os.environ.get("VA_OUTPUTS", ROOT / "outputs"))
 LOW, HIGH = 10, 30  # our own convention: projected loss % below LOW = Low, below HIGH = Medium, else High
@@ -55,6 +56,9 @@ twins["similarity"] = pd.to_numeric(twins["similarity"], errors="coerce")
 if "twin_iucn_status" not in twins:
     twins["twin_iucn_status"] = "not assessed"
 twins["twin_iucn_status"] = twins["twin_iucn_status"].fillna("not assessed")
+if "ema_evidence" not in twins:  # older twins.csv / sample file
+    twins["ema_evidence"] = "n/a"
+EMA = load_ema()
 risk["cls"] = risk.loss_pct.map(risk_class)
 
 # ---- sidebar
@@ -88,8 +92,9 @@ def species_card(r, show_bars=True):
             T.bar("Projected habitat loss", r.loss_pct, fmt(r.loss_pct, suffix="%"), COLOR[r.cls]) +
             T.bar("Model AUC (spatial CV)", r.auc * 100, fmt(r.auc, "{:.2f}"))) if show_bars else ""
     fam = FAMILY.get(r.species, "—")
-    return (f'<div class="card"><div class="row">{pic}<div><div class="sci">{T.e(r.species)}</div>'
+    return (f'<div class="card"><div class="row">{pic}<div><div class="sci">{T.e(r.species)} <span class="auth">{T.e(AUTHORITY.get(r.species, ""))}</span></div>'
             f'<p>{T.e(COMMON.get(r.species, ""))} · {T.e(fam)} {T.badge(r.cls)}</p>'
+            f'<p>EU herbal monograph (EMA): {T.e(ema_label(r.species, EMA))}</p>'
             f'<p>{fmt(r.n_records)} GBIF records · {fmt(r.area_now_km2, "{:,.0f}")} km² suitable now → {fmt(r.area_2050_km2, "{:,.0f}")} km² in 2041–2060</p>{bars}</div></div></div>')
 
 
@@ -144,8 +149,8 @@ def network(sp_, tw_):
 def ranking(tw_):
     if not len(tw_):
         return '<div class="empty">No twins computed for this species (too few compounds in LOTUS).</div>'
-    return "".join(f'<div class="rank"><span>{i}. {T.e(t)}</span><span>{fmt(s, "{:.2f}")} <i>{T.e(str(st_))}</i></span></div>'
-                   for i, (t, s, st_) in enumerate(zip(tw_.twin, tw_.similarity, tw_.twin_iucn_status), 1))
+    return "".join(f'<div class="rank"><span>{i}. <i class="sp">{T.e(t)}</i><br><small>EMA: {T.e(str(ev))} · IUCN: {T.e(str(st_))}</small></span><span>{fmt(s, "{:.2f}")}</span></div>'
+                   for i, (t, s, st_, ev) in enumerate(zip(tw_.twin, tw_.similarity, tw_.twin_iucn_status, tw_.ema_evidence), 1))
 
 
 def donut():
@@ -257,10 +262,17 @@ else:  # Data & Methods
                     "- Random Forest presence/background model on WorldClim bioclimatic variables; AUC from 1-degree spatial block cross-validation.\n"
                     "- Projections for 2041–2060 under SSP2-4.5 and SSP5-8.5; threshold = 10th percentile of held-out presences.\n"
                     f"- Risk class from projected loss: Low < {LOW}%, Medium < {HIGH}%, High otherwise. This is our own convention, not an IUCN category.\n"
-                    "- Chemical twins: Jaccard similarity of LOTUS compound sets (InChIKey skeleton), same plant family, at least 5 compounds each.")
+                    "- Chemical twins: Jaccard similarity of LOTUS compound sets (InChIKey skeleton), same plant family, species level only, at least 5 compounds each.")
+    with st.expander("EU herbal monograph evidence (EMA)"):
+        st.markdown("For each plant we show whether the European Medicines Agency's committee on herbal medicines (HMPC) has published an EU herbal monograph: "
+                    "**well-established use** (sufficient safety and efficacy data) or **traditional use** (sufficient safety data and plausible efficacy from long-standing use). "
+                    "This describes the *plant*, not the chemical similarity: a twin with a monograph is not shown to be a substitute, and traditional use is not clinical proof. "
+                    "\"No EU monograph\" means none in the EMA overview EMA/HMPC/228356/2012 Rev. 2 (March 2023) for the plant families we use, so newer monographs may be missing. "
+                    "Botanical names were checked against each EMA herbal page. Table: `data/ema_monographs.csv`.")
     with st.expander("Why Sideritis scardica is not modelled"):
         st.markdown(f"On 2026-11-04 GBIF had {g.get('gbif_records_in_region', '?')} records in our region ({g.get('usable_after_filters', '?')} usable after filters, minimum 30) "
-                    f"and LOTUS only {g.get('lotus_compounds', '?')} compounds (minimum 5). It is reported as **insufficient data**, not as a modelled species.")
+                    f"and LOTUS only {g.get('lotus_compounds', '?')} compounds (minimum 5). It is reported as **insufficient data**, not as a modelled species. "
+                    "(It does have an EU traditional-use herbal monograph, so the gap is in occurrence and chemistry data, not in interest.)")
     with st.expander("Limitations"):
         st.markdown("GBIF sampling bias; climate-model disagreement (see scenario ranges); habitat suitability is not abundance or extinction risk; "
                     "chemical similarity is not medicinal equivalence. Nothing here is medical advice.")

@@ -4,6 +4,7 @@ Optional data/iucn_status.csv (columns taxon,status) fills twin_iucn_status; oth
 """
 import os
 import pandas as pd, requests
+from src.chemistry.ema import ema_label, load_ema
 from src.config import FAMILY, SPECIES
 
 WDQS = "https://query.wikidata.org/sparql"
@@ -22,7 +23,11 @@ def fetch_family(family: str) -> pd.DataFrame:
                          for b in r.json()["results"]["bindings"]])
 
 
-def build_twins(comp: pd.DataFrame, species, family_of, status=None, top=5) -> pd.DataFrame:
+def is_species(name: str) -> bool:
+    return len(name.replace("×", " ").split()) == 2  # drops genus-level items ("Salvia") and subspecies
+
+
+def build_twins(comp: pd.DataFrame, species, family_of, status=None, top=5, ema=None) -> pd.DataFrame:
     # first 14 chars of an InChIKey = molecular skeleton, so stereoisomers count as the same compound
     comp = comp.assign(key=comp.inchikey.str[:14]).drop_duplicates(["taxon", "key"])
     sets = comp.groupby("taxon").key.agg(set)
@@ -33,13 +38,13 @@ def build_twins(comp: pd.DataFrame, species, family_of, status=None, top=5) -> p
             print(f"SKIP {sp}: {len(sets.get(sp, ()))} compounds in LOTUS"); continue
         cand = []
         for t, s in sets.items():
-            if t == sp or len(s) < MIN_COMPOUNDS or taxa_family is None or taxa_family[t] != family_of[sp]:
+            if t == sp or not is_species(t) or len(s) < MIN_COMPOUNDS or taxa_family is None or taxa_family[t] != family_of[sp]:
                 continue
             cand.append((t, len(s & sets[sp]) / len(s | sets[sp])))
         for t, sim in sorted(cand, key=lambda x: -x[1])[:top]:
             rows.append(dict(species=sp, twin=t, similarity=round(sim, 3),
-                             twin_iucn_status=(status or {}).get(t, "not assessed")))
-    return pd.DataFrame(rows, columns=["species", "twin", "similarity", "twin_iucn_status"])
+                             twin_iucn_status=(status or {}).get(t, "not assessed"), ema_evidence=ema_label(t, ema or {})))
+    return pd.DataFrame(rows, columns=["species", "twin", "similarity", "twin_iucn_status", "ema_evidence"])
 
 
 if __name__ == "__main__":
@@ -48,7 +53,7 @@ if __name__ == "__main__":
         pd.concat(frames).to_csv("data/lotus_compounds.csv", index=False)
     comp = pd.read_csv("data/lotus_compounds.csv")
     st = pd.read_csv("data/iucn_status.csv").set_index("taxon").status.to_dict() if os.path.exists("data/iucn_status.csv") else None
-    out = build_twins(comp, SPECIES, FAMILY, st)
+    out = build_twins(comp, SPECIES, FAMILY, st, ema=load_ema())
     os.makedirs("outputs", exist_ok=True)
     out.to_csv("outputs/twins.csv", index=False)
     print(out)
