@@ -18,3 +18,5 @@ FAMILY = {
 }
 # Checked live on GBIF/Wikidata, 2026-11-04: too little data to model, reported as a data-gap finding (see README)
 DATA_GAP = {"Sideritis scardica": {"gbif_records_in_region": 43, "usable_after_filters": 23, "lotus_compounds": 2}}
+# Author citations, checked against the GBIF backbone on 2026-11-04 (all five names ACCEPTED)
+AUTHORITY = {sp: "L." for sp in SPECIES}

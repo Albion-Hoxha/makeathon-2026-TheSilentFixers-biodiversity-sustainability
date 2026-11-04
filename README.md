@@ -17,7 +17,7 @@ streamlit run app/app.py             # dashboard (shows SAMPLE DATA banner until
 | Owner | Work | Output |
 |---|---|---|
 | Afron (climate) | GBIF + WorldClim -> MaxEnt (`elapid`), now vs 2050 (SSP2-4.5, SSP5-8.5), spatial CV | `outputs/risk.csv`: `species,n_records,area_now_km2,area_2050_km2,loss_pct,auc` and maps `outputs/maps/<species>_now.png`, `<species>_2050.png` |
-| Rinesa (chemistry + app) | LOTUS via Wikidata SPARQL (P703), Jaccard/Tanimoto similarity, dashboard, slides | `outputs/twins.csv`: `species,twin,similarity,twin_iucn_status` |
+| Rinesa (chemistry + app) | LOTUS via Wikidata SPARQL (P703), Jaccard/Tanimoto similarity, dashboard, slides | `outputs/twins.csv`: `species,twin,similarity,twin_iucn_status,ema_evidence` (`twins.py` writes it all, including the EMA column) |
 | Albion (lead) | integration, deploy, Devpost, video | |
 
 Species and region live in `src/config.py`. Put climate code in `src/climate/`, chemistry in `src/chemistry/`.
@@ -35,8 +35,17 @@ Modelled species: *Salvia officinalis, Gentiana lutea, Arnica montana, Origanum 
 ## Dashboard (app/)
 `streamlit run app/app.py`: 7 pages (Overview, Species Explorer, Climate Explorer, Chemical Twins, Risk Analytics, Conservation, Data & Methods). Every number is read from `outputs/risk.csv`, `risk_scenarios.csv` and `twins.csv`; without them it shows `outputs/sample_*.csv` under a SAMPLE DATA banner. Photos (Wikimedia Commons, CC BY-SA / public domain) are in `app/assets/`, fetched by `scripts/fetch_assets.py`; credits are listed on the Data & Methods page (`app/assets/credits.json`). The Observed-records map uses GBIF occurrences (`app/assets/occurrences.csv`, or `data/occurrences.csv` when present), downloaded 2026-11-04.
 
+## EU herbal monograph evidence (EMA)
+`data/ema_monographs.csv` lists species with an EU herbal monograph (well-established or traditional use), read from the EMA overview EMA/HMPC/228356/2012 Rev. 2 (March 2023) and checked against each EMA herbal page (`python scripts/build_ema_table.py`). `twins.py` adds it as `ema_evidence`. It describes the plant's regulatory status, not the chemical similarity.
+
+## API keys
+None needed: GBIF, Wikidata, WorldClim and EMA pages are queried without keys.
+
+## Team workflow
+Work on a branch (`climate`, `chemistry`, `dev`) and merge to `main` through the team lead.
+
 ## Data and licences
-GBIF (CC0/CC-BY), WorldClim 2.1 (CC-BY 4.0), LOTUS (CC0), IUCN Red List and WDPA (non-commercial terms, cite).
+GBIF (CC0/CC-BY), WorldClim 2.1 (CC-BY 4.0), LOTUS (CC0), EMA herbal monographs (public, cite EMA), IUCN Red List and WDPA (non-commercial terms, cite). Photos: Wikimedia Commons, see the dashboard credits.
 
 ## Limits
 Chemical similarity does not imply equal therapeutic effect: twins are research candidates, not medical substitutes. Sample files in `outputs/sample_*.csv` are placeholders, not results.

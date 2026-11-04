@@ -40,7 +40,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',serif!important;color:var(--txt)}
 .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.row>div:last-child{flex:1;min-width:220px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 .rank{display:flex;justify-content:space-between;border-bottom:1px solid #14473d;padding:6px 0;color:var(--txt);font-size:.9rem}
-.rank i{color:var(--mut)}
+.rank i{color:var(--mut)}.rank i.sp{color:var(--txt)}.rank small{color:var(--mut);font-size:.75rem}.auth{font-style:normal;font-size:1rem;color:var(--mut)}
 .empty{border:1px dashed #1f6b58;border-radius:12px;padding:18px;color:var(--mut);text-align:center}
 </style>"""
 
