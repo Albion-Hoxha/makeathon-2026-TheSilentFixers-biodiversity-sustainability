@@ -66,6 +66,17 @@ if "ema_evidence" not in twins:  # older twins.csv / sample file
 EMA = load_ema()
 risk["cls"] = risk.loss_pct.map(risk_class)
 
+@st.cache_data
+def load_lotus_sets(path):
+    p = Path(path)
+    if not p.exists():
+        return {}
+    compounds = pd.read_csv(p, usecols=["taxon", "inchikey"])
+    compounds["skeleton"] = compounds.inchikey.astype(str).str[:14]
+    return compounds.groupby("taxon").skeleton.agg(lambda values: set(values)).to_dict()
+
+LOTUS_SETS = load_lotus_sets(str(ROOT / "data" / "lotus_compounds.csv"))
+
 # ---- sidebar
 with st.sidebar:
     st.markdown('<div class="brand">VANISHING<br>APOTHECARY<small>BALKAN BOTANICAL INTELLIGENCE</small></div>', unsafe_allow_html=True)
@@ -105,8 +116,10 @@ def species_card(r, show_bars=True):
     img = T.img_data(ROOT / "app" / "assets" / "species" / f"{r.species}.jpg")
     g, s = r.species.split()[0][0], r.species.split()[-1][0]
     pic = f'<img class="avatar" src="{img}">' if img else f'<div class="avatar">{g}.{s}.</div>'
-    bars = (T.bar("Habitat retained 2041–2060", 100 - r.loss_pct, fmt(100 - r.loss_pct, suffix="%")) +
-            T.bar("Projected habitat loss", r.loss_pct, fmt(r.loss_pct, suffix="%"), COLOR[r.cls]) +
+    direction = "gain" if r.loss_pct < 0 else "loss"
+    magnitude = abs(r.loss_pct)
+    change_color = COLOR["Low"] if r.loss_pct < 0 else COLOR[r.cls]
+    bars = (T.bar(f"Projected area {direction}", min(magnitude, 100), f"{magnitude:.1f}% {direction}", change_color) +
             T.bar("Model AUC (spatial CV)", r.auc * 100, fmt(r.auc, "{:.2f}"))) if show_bars else ""
     fam = FAMILY.get(r.species, "—")
     return (f'<div class="card"><div class="row">{pic}<div><div class="sci">{T.e(r.species)} <span class="auth">{T.e(AUTHORITY.get(r.species, ""))}</span></div>'
@@ -181,7 +194,8 @@ def donut():
 def loss_bars(col):
     d = risk.sort_values(col)
     fig = go.Figure(go.Bar(x=d[col], y=d.species, orientation="h", marker_color=[COLOR[c] for c in d.cls]))
-    fig.update_xaxes(title="Projected habitat loss, 2041–2060 (%)", gridcolor="#14473d")
+    fig.add_vline(x=0, line_dash="dash", line_color="#D9B85F", opacity=.8)
+    fig.update_xaxes(title="Projected change in suitable area, 2041–2060 (%) · negative = gain", gridcolor="#14473d", zeroline=False)
     return T.style(fig, 280)
 
 
@@ -189,13 +203,17 @@ def loss_bars(col):
 if page == "Overview":
     st.markdown(T.hero("VANISHING APOTHECARY", "Climate risk and chemical twins for Balkan medicinal plants", "Hackathon prototype",
                        T.img_data(ROOT / "app" / "assets" / "hero.jpg")), unsafe_allow_html=True)
-    worst = risk.loc[risk.loss_pct.idxmax()] if risk.loss_pct.notna().any() else None
+    projected_losses = risk[risk.loss_pct > 0]
+    worst = projected_losses.loc[projected_losses.loss_pct.idxmax()] if len(projected_losses) else None
     st.markdown(T.kpis([
         ("Species modelled", len(risk), "plants with enough data"),
-        ("Mean projected habitat loss", fmt(risk.loss_pct.mean(), "{:.1f}", "%"), "2041–2060, mean of scenarios"),
-        ("Largest projected loss", worst.species if worst is not None else "—", fmt(worst.loss_pct if worst is not None else float("nan"), "{:.0f}", "% of suitable area")),
+        ("Mean projected area change", fmt(risk.loss_pct.mean(), "{:+.1f}", "%"), "2041–2060 · negative = gain"),
+        ("Largest projected loss", worst.species if worst is not None else "None projected", fmt(worst.loss_pct if worst is not None else float("nan"), "{:.1f}", "% of suitable area")),
         ("Chemical twin pairs", len(twins), "Jaccard-ranked candidates"),
         ("Mean spatial-CV AUC", fmt(risk.auc.mean(), "{:.2f}"), "model skill on held-out regions")]), unsafe_allow_html=True)
+    gains = int((risk.loss_pct < 0).sum())
+    losses = int((risk.loss_pct > 0).sum())
+    st.caption(f"Across the five species, the model projects suitable-area gains for {gains} and losses for {losses}. Area change is not a population trend or extinction probability.")
     a, b = st.columns([3, 2])
     with a:
         with panel("Habitat map: " + sp):
@@ -216,26 +234,77 @@ if page == "Overview":
 
 elif page == "Species Explorer":
     st.header("Species Explorer")
+    st.caption("See how modelled suitable area shifts from today to 2041–2060, alongside occurrence coverage and model performance.")
+    compare_species = st.multiselect("Plants in this comparison", list(risk.species), default=list(risk.species), key="species_compare")
+    compared = risk[risk.species.isin(compare_species)].sort_values("loss_pct", ascending=False)
+    if len(compared):
+        mean_change = -compared.loss_pct.mean()
+        direction = "gain" if mean_change >= 0 else "loss"
+        gains = int((compared.loss_pct < 0).sum())
+        losses = int((compared.loss_pct > 0).sum())
+        st.markdown(T.kpis([
+            ("Plants compared", len(compared), "of 5 focal species"),
+            ("GBIF observations", f"{compared.n_records.sum():,.0f}", "records across selection"),
+            ("Average modelled change", f"{abs(mean_change):.1f}% {direction}", "negative risk-file values mean gains"),
+            ("Projected direction", f"{gains} gain · {losses} loss", "based on modelled suitable area")
+        ]), unsafe_allow_html=True)
+
+        fig = go.Figure()
+        for row in compared.itertuples():
+            connector_color = COLOR["Low"] if row.loss_pct < 0 else COLOR["High"]
+            fig.add_trace(go.Scatter(x=[row.area_now_km2, row.area_2050_km2], y=[row.species, row.species],
+                                     mode="lines", line=dict(color=connector_color, width=3), hoverinfo="skip", showlegend=False))
+        fig.add_trace(go.Scatter(x=compared.area_now_km2, y=compared.species, mode="markers", name="Current",
+                                 marker=dict(size=15, color="#20C979", line=dict(color="#d8f4e3", width=1)),
+                                 customdata=compared.n_records,
+                                 hovertemplate="%{y}<br>Current suitable area: %{x:,.0f} km²<br>GBIF records: %{customdata:,}<extra></extra>"))
+        future_text = [f"{abs(v):.0f}% {'gain' if v < 0 else 'loss'}" for v in compared.loss_pct]
+        fig.add_trace(go.Scatter(x=compared.area_2050_km2, y=compared.species, mode="markers+text", name="2041–2060",
+                                 text=future_text, textposition="middle right", cliponaxis=False,
+                                 marker=dict(size=17, symbol="diamond", color="#D9B85F", line=dict(color="#fff0bd", width=1)),
+                                 customdata=compared.loss_pct,
+                                 hovertemplate="%{y}<br>2041–2060 suitable area: %{x:,.0f} km²<br>Loss-positive index: %{customdata:+.1f}%<extra></extra>"))
+        fig.update_layout(title="Suitable habitat: current climate → 2041–2060", xaxis_title="Modelled suitable area (km²)", yaxis_title="",
+                          showlegend=True, legend=dict(orientation="h", y=1.08, x=0), margin=dict(r=110))
+        fig.update_xaxes(range=[0, compared[["area_now_km2", "area_2050_km2"]].to_numpy().max() * 1.45], gridcolor="#14473d")
+        st.plotly_chart(T.style(fig, max(320, 64 * len(compared))), use_container_width=True)
+        st.caption("Teal dot = current modelled area · gold diamond = future area · connector color shows direction (green = gain, coral = loss). These are suitability projections, not population forecasts.")
+        comp_table = compared[["species", "n_records", "area_now_km2", "area_2050_km2", "loss_pct", "auc"]].rename(columns={
+            "n_records": "GBIF records", "area_now_km2": "Suitable now (km²)", "area_2050_km2": "Suitable 2041–2060 (km²)",
+            "loss_pct": "Area change (%)", "auc": "Spatial-CV AUC"})
+        with st.expander("View detailed comparison values"):
+            st.dataframe(comp_table, hide_index=True, use_container_width=True)
+    else:
+        st.info("Choose at least one plant to compare.")
     st.markdown('<div class="grid">' + "".join(species_card(x) for x in risk.itertuples()) + "</div>", unsafe_allow_html=True)
     st.subheader(sp)
     maps(sp)
 
 elif page == "Climate Explorer":
     st.header("Climate Explorer")
-    st.caption("WorldClim CMIP6, period 2041–2060 (not yearly values). Habitat = Random Forest suitability above a 10th-percentile threshold.")
-    col = "loss_pct"
+    st.caption("WorldClim CMIP6, period 2041–2060 (not yearly values). Habitat = Random Forest suitability above a 10th-percentile threshold. Negative area change means a modelled gain.")
     if scen is not None and len(scen):
-        pick = st.selectbox("Scenario", ["Mean of scenarios"] + sorted(scen.scenario.unique()))
-        if pick != "Mean of scenarios":
-            d = scen[scen.scenario == pick].set_index("species").loss_pct
-            risk["scenario_loss"] = risk.species.map(d)
-            risk["cls"] = risk.scenario_loss.map(risk_class)
-            col = "scenario_loss"
-        rng = scen[scen.species == sp].loss_pct
+        choices = {"Mean across all 6 GCM runs": None, "SSP2-4.5 · mean across GCMs": "ssp245", "SSP5-8.5 · mean across GCMs": "ssp585"}
+        pick = st.selectbox("Climate projection", list(choices))
+        prefix = choices[pick]
+        selected_runs = scen if prefix is None else scen[scen.scenario.str.startswith(prefix)]
+        d = selected_runs.groupby("species").loss_pct.mean()
+        risk["scenario_loss"] = risk.species.map(d)
+        risk["cls"] = risk.scenario_loss.map(risk_class)
+        col = "scenario_loss"
+        rng = selected_runs[selected_runs.species == sp].sort_values("loss_pct")
         if len(rng):
-            st.info(f"{sp}: projected loss ranges {rng.min():.0f}% to {rng.max():.0f}% across {len(rng)} scenario/GCM runs.")
+            st.info(f"{sp}: projected area change ranges from {rng.loss_pct.min():+.1f}% to {rng.loss_pct.max():+.1f}% across {len(rng)} GCM runs; negative values are gains.")
+            run_labels = rng.scenario.str.replace("ssp245", "SSP2-4.5", regex=False).str.replace("ssp585", "SSP5-8.5", regex=False).str.replace("_", " · ", regex=False)
+            fig = go.Figure(go.Bar(x=rng.loss_pct, y=run_labels, orientation="h",
+                                   marker_color=[COLOR["Low"] if v < 0 else COLOR[risk_class(v)] for v in rng.loss_pct],
+                                   hovertemplate="%{y}<br>Area change: %{x:.1f}%<extra></extra>"))
+            fig.add_vline(x=0, line_dash="dash", line_color="#D9B85F")
+            fig.update_layout(title=f"GCM range for {sp}", xaxis_title="Projected suitable-area change (%)", yaxis_title="", showlegend=False)
+            st.plotly_chart(T.style(fig, max(230, 42 * len(rng))), use_container_width=True)
     else:
         st.info("Per-scenario results (risk_scenarios.csv) appear after the climate model has run.")
+        col = "loss_pct"
     st.plotly_chart(loss_bars(col), use_container_width=True)
     maps(sp)
 
@@ -245,25 +314,45 @@ elif page == "Chemical Twins":
     a, b = st.columns([3, 2])
     a.plotly_chart(network(sp, tw), use_container_width=True)
     b.markdown(T.card("Top similar species (Jaccard)", ranking(tw)), unsafe_allow_html=True)
-    lotus = ROOT / "data" / "lotus_compounds.csv"
-    if lotus.exists():
-        comp = pd.read_csv(lotus)
-        sets = comp.assign(k=comp.inchikey.str[:14]).groupby("taxon").k.agg(set)
-        if sp in sets:
-            st.caption(f"{sp}: {len(sets[sp])} distinct compounds in LOTUS. Shared with twins: " +
-                       ", ".join(f"{t} {len(sets[sp] & sets[t])}" for t in tw.twin if t in sets))
-    st.dataframe(tw, hide_index=True)
+    focal_set = LOTUS_SETS.get(sp, set())
+    twin_details = tw.copy()
+    twin_details["shared_skeletons"] = [len(focal_set & LOTUS_SETS.get(t, set())) for t in twin_details.twin]
+    twin_details["twin_lotus_skeletons"] = [len(LOTUS_SETS.get(t, set())) for t in twin_details.twin]
+    twin_details = twin_details.rename(columns={"species": "Focal species", "twin": "Candidate twin", "similarity": "Jaccard similarity",
+                                                "shared_skeletons": "Shared chemical skeletons", "twin_lotus_skeletons": "Twin LOTUS coverage",
+                                                "ema_evidence": "EMA evidence", "twin_iucn_status": "IUCN status"})
+    st.caption(f"{sp}: {len(focal_set)} distinct LOTUS chemical skeletons. Jaccard = shared skeletons ÷ all unique skeletons across the pair; rankings require at least 5 skeletons per species.")
+    st.dataframe(twin_details, hide_index=True, use_container_width=True)
+    with st.expander("View shared chemical-skeleton identifiers"):
+        if not focal_set:
+            st.info("LOTUS compound data are unavailable for the selected plant.")
+        else:
+            for twin_name in tw.twin:
+                shared = sorted(focal_set & LOTUS_SETS.get(twin_name, set()))
+                st.markdown(f"**{twin_name}:** {', '.join(shared[:8]) if shared else 'No shared identifiers found in the local LOTUS file'}")
+            st.caption("Identifiers are the first 14 characters of InChIKeys, used by the pipeline to group stereoisomers. The file does not include readable compound names.")
 
 elif page == "Risk Analytics":
     st.header("Risk Analytics")
     st.dataframe(risk[["species", "cls", "n_records", "area_now_km2", "area_2050_km2", "loss_pct", "auc"]].rename(columns={"cls": "risk class"}), hide_index=True)
-    st.caption("AUC is computed on held-out 1-degree spatial blocks. Values near 0.5 mean no skill. Low record counts make a species less reliable.")
+    st.caption("AUC is computed on held-out 1-degree spatial blocks. Values near 0.5 indicate little discrimination; record count is a data-coverage indicator, not a guarantee of model quality.")
+    fig = go.Figure()
+    for cls in [c for c in ["Low", "Medium", "High", "n/a"] if c in set(risk.cls)]:
+        d = risk[risk.cls == cls]
+        fig.add_trace(go.Scatter(x=d.n_records, y=d.auc, mode="markers", customdata=d.species,
+                                 name=cls, marker=dict(size=13, color=COLOR[cls], line=dict(color="#d7eee0", width=1)),
+                                 hovertemplate="%{customdata}<br>GBIF records: %{x:,}<br>Spatial-CV AUC: %{y:.3f}<extra></extra>"))
+    fig.add_hline(y=.5, line_dash="dash", line_color="#D9B85F", annotation_text="AUC = 0.5 baseline")
+    fig.update_layout(title="Occurrence coverage and held-out model performance", xaxis_title="GBIF records used", yaxis_title="Spatial-block CV AUC", showlegend=False)
+    st.plotly_chart(T.style(fig, 380), use_container_width=True)
     st.plotly_chart(loss_bars("loss_pct"), use_container_width=True)
 
 elif page == "Conservation":
     st.header("Conservation")
-    st.info("Model findings (the table) are separate from suggested actions (the cards). The model does not measure whether any action works.")
-    st.dataframe(risk.sort_values("loss_pct", ascending=False)[["species", "cls", "loss_pct"]].rename(columns={"cls": "suggested monitoring priority"}), hide_index=True)
+    st.info("This is a screening view, not a conservation-status assessment. The model identifies projected suitable-area change; it does not measure population trends, harvest pressure or whether an action works.")
+    st.dataframe(risk.sort_values("loss_pct", ascending=False)[["species", "cls", "loss_pct", "n_records"]].rename(columns={
+        "cls": "screening category", "loss_pct": "Area change index (%) · positive = loss", "n_records": "GBIF records"}), hide_index=True, use_container_width=True)
+    st.warning("Protected-area overlap is not calculated: WDPA data are not integrated in this project yet. Do not interpret this page as showing how much habitat is protected.")
     st.markdown('<div class="grid">' + T.card("Monitor", "<p>Prioritise field monitoring where projected loss is highest.</p>") +
                 T.card("Protect", "<p>Check overlap with protected areas. WDPA overlay is not integrated yet.</p>") +
                 T.card("Cultivate", "<p>Controlled cultivation is a research direction, not a finding.</p>") + "</div>", unsafe_allow_html=True)
@@ -271,6 +360,12 @@ elif page == "Conservation":
 else:  # Data & Methods
     st.header("Data & Methods")
     g = DATA_GAP.get("Sideritis scardica", {})
+    lotus_counts = {species: len(LOTUS_SETS.get(species, set())) for species in risk.species}
+    coverage = risk[["species", "n_records", "auc", "loss_pct"]].copy()
+    coverage["LOTUS skeletons"] = coverage.species.map(lotus_counts)
+    coverage = coverage.rename(columns={"species": "Species", "n_records": "GBIF records", "auc": "Spatial-CV AUC", "loss_pct": "Area change index (%) · positive = loss"})
+    st.caption("Project data snapshot: 4 November 2026. Climate projections represent 2041–2060.")
+    st.dataframe(coverage, hide_index=True, use_container_width=True)
     with st.expander("Data sources and licences", expanded=True):
         st.markdown("| Data | Source | Licence |\n|---|---|---|\n| Occurrences | GBIF | CC0 / CC-BY |\n| Climate | WorldClim 2.1 (CMIP6) | CC-BY 4.0 |\n"
                     "| Natural products | LOTUS via Wikidata | CC0 |\n| Conservation context | IUCN, WDPA (not integrated yet) | non-commercial terms, cite |")
@@ -280,6 +375,11 @@ else:  # Data & Methods
                     "- Projections for 2041–2060 under SSP2-4.5 and SSP5-8.5; threshold = 10th percentile of held-out presences.\n"
                     f"- Risk class from projected loss: Low < {LOW}%, Medium < {HIGH}%, High otherwise. This is our own convention, not an IUCN category.\n"
                     "- Chemical twins: Jaccard similarity of LOTUS compound sets (InChIKey skeleton), same plant family, species level only, at least 5 compounds each.")
+    with st.expander("How to read the numbers"):
+        st.markdown("- **Area change index:** `(current suitable area − future suitable area) ÷ current suitable area × 100`. Positive values mean modelled area loss; negative values mean modelled area gain. It is not a population trend or extinction probability.\n"
+                    "- **AUC:** discrimination between presence and background records on held-out spatial blocks; 0.5 is approximately chance-level.\n"
+                    "- **Jaccard similarity:** shared LOTUS chemical skeletons divided by all unique skeletons across the pair. It measures database overlap, not therapeutic equivalence.\n"
+                    "- **LOTUS coverage:** unique 14-character InChIKey skeletons found in the downloaded dataset; a low count can make the twin ranking incomplete.")
     with st.expander("EU herbal monograph evidence (EMA)"):
         st.markdown("For each plant we show whether the European Medicines Agency's committee on herbal medicines (HMPC) has published an EU herbal monograph: "
                     "**well-established use** (sufficient safety and efficacy data) or **traditional use** (sufficient safety data and plausible efficacy from long-standing use). "
