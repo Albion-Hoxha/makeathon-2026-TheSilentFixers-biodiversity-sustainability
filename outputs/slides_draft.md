@@ -98,6 +98,7 @@ Draft of 9 slides. Climate figures below come from the committed model outputs; 
 - LOTUS records **319, 97, 122, 160 and 207** distinct compound skeletons for the five focal species, respectively.
 - *Gentiana lutea* has the lowest LOTUS coverage (97), followed by *Arnica montana* (122); both exceed the five-compound minimum.
 - Across all 25 ranked pairs: **4** have EMA “traditional use” evidence; **21** have “no EU monograph.” All 25 candidate IUCN statuses are “not assessed.”
+- The EMA label describes the monograph evidence status; it does **not** mean that a candidate is a medically equivalent or approved substitute for the focal plant.
 
 **Caution:** Jaccard measures overlap in database records. Chemical overlap does not establish equal medicinal effect, safety or substitutability. Twins are research candidates only.
 
