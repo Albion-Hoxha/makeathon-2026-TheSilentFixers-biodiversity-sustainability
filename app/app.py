@@ -20,6 +20,11 @@ COMMON = {"Salvia officinalis": "Common sage", "Gentiana lutea": "Yellow gentian
           "Origanum vulgare": "Oregano", "Hypericum perforatum": "St John's wort"}
 COLOR = {"Low": "#48D98D", "Medium": "#E9C66C", "High": "#E4694F", "n/a": "#8FB5A3"}
 PAGES = ["Overview", "Species Explorer", "Climate Explorer", "Chemical Twins", "Risk Analytics", "Conservation", "Data & Methods"]
+PAGE_ICONS = {
+    "Overview": "✦", "Species Explorer": "❋", "Climate Explorer": "☼",
+    "Chemical Twins": "⚗", "Risk Analytics": "⌁", "Conservation": "♧",
+    "Data & Methods": "▤",
+}
 
 st.set_page_config(page_title="Vanishing Apothecary", layout="wide")
 st.markdown(T.CSS, unsafe_allow_html=True)
@@ -64,7 +69,19 @@ risk["cls"] = risk.loss_pct.map(risk_class)
 # ---- sidebar
 with st.sidebar:
     st.markdown('<div class="brand">VANISHING<br>APOTHECARY<small>BALKAN BOTANICAL INTELLIGENCE</small></div>', unsafe_allow_html=True)
-    page = st.radio("Navigate", PAGES, label_visibility="collapsed")
+    if "current_page" not in st.session_state or st.session_state.current_page not in PAGES:
+        st.session_state.current_page = PAGES[0]
+    st.markdown('<div class="side-label">EXPLORE THE PROJECT</div>', unsafe_allow_html=True)
+    for nav_page in PAGES:
+        st.button(
+            f"{PAGE_ICONS[nav_page]}   {nav_page}",
+            key=f"nav_{nav_page}",
+            type="primary" if st.session_state.current_page == nav_page else "secondary",
+            use_container_width=True,
+            on_click=lambda selected=nav_page: setattr(st.session_state, "current_page", selected),
+        )
+    page = st.session_state.current_page
+    st.markdown('<div class="side-label species-label">FOCAL PLANT</div>', unsafe_allow_html=True)
     sp = st.selectbox("Species", list(risk.species))
     st.markdown('<div class="quote">Discover what disappears.<br>Understand what remains.</div>', unsafe_allow_html=True)
 r = risk[risk.species == sp].iloc[0]

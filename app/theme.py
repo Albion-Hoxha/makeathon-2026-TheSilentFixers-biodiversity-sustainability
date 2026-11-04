@@ -15,6 +15,13 @@ html,body,[class*="css"]{font-family:Inter,sans-serif}
 .stApp{background:radial-gradient(1200px 600px at 70% -10%,#0B3A33 0%,#031411 60%)}
 [data-testid=stSidebar]{background:#021713;border-right:1px solid #0f3b33}
 h1,h2,h3{font-family:'Cormorant Garamond',serif!important;color:var(--txt)}
+.side-label{color:#6F9E89;font-size:.62rem;font-weight:700;letter-spacing:2px;margin:16px 0 8px;padding-left:3px}
+.species-label{margin-top:18px}
+[data-testid=stSidebar] [data-testid=stBaseButton-secondary],[data-testid=stSidebar] [data-testid=stBaseButton-primary]{justify-content:flex-start;text-align:left;border-radius:11px;padding:.5rem .75rem;min-height:2.55rem;transition:all .18s ease;font-size:.84rem;font-weight:600}
+[data-testid=stSidebar] [data-testid=stBaseButton-secondary]{background:linear-gradient(120deg,rgba(9,43,37,.78),rgba(5,30,26,.85));border:1px solid rgba(40,94,75,.48);color:#b9d2c5}
+[data-testid=stSidebar] [data-testid=stBaseButton-secondary]:hover{background:linear-gradient(120deg,#0d3b30,#092b25);border-color:#32b87b;color:#f1fff5;transform:translateX(3px);box-shadow:0 5px 14px rgba(0,0,0,.18)}
+[data-testid=stSidebar] [data-testid=stBaseButton-primary]{background:linear-gradient(115deg,#176244,#0c3b2e);border:1px solid #36bd7d;color:#fff;box-shadow:inset 3px 0 #55e09a,0 5px 16px rgba(4,20,14,.35)}
+[data-testid=stSidebar] [data-testid=stBaseButton-primary]:hover{background:linear-gradient(115deg,#1b704e,#104936);border-color:#67e7a7;color:#fff}
 .brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;letter-spacing:2px;color:var(--txt);line-height:1.1;margin:4px 0 14px}
 .brand small{display:block;color:var(--gold);font-size:.7rem;letter-spacing:3px}
 .quote{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mint);border-top:1px solid #14473d;padding-top:10px;margin-top:18px}
