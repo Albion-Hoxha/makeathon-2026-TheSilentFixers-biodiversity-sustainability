@@ -7,15 +7,19 @@ PAGES = ["Overview", "Species Explorer", "Climate Explorer", "Chemical Twins", "
 
 
 def run(page):
-    at = AppTest.from_file(APP, default_timeout=60).run()
-    at.sidebar.radio[0].set_value(page).run()
+    at = AppTest.from_file(APP, default_timeout=60)
+    at.session_state["current_page"] = page  # navigation is a set of buttons that write this key
+    at.run()
     assert not at.exception, [e.value for e in at.exception]
     return at
 
 
 @pytest.mark.parametrize("page", PAGES)
 def test_every_page_runs_on_sample_data(page, monkeypatch, tmp_path):
-    monkeypatch.setenv("VA_OUTPUTS", str(Path(APP).parents[1] / "outputs"))  # repo has only sample_* files
+    import shutil
+    for n in ("sample_risk.csv", "sample_twins.csv"):  # a folder with only the sample files, as before any real result exists
+        shutil.copy(Path(APP).parents[1] / "outputs" / n, tmp_path / n)
+    monkeypatch.setenv("VA_OUTPUTS", str(tmp_path))
     at = run(page)
     assert any("SAMPLE DATA" in w.value for w in at.warning)
 
