@@ -123,22 +123,28 @@ def run(occ_path="data/occurrences.csv", cur_path="data/climate/current.tif",
             print(f"SKIP {sp}: only {len(occ)} records"); continue
         model, thr, auc, env = fit_species(cur, tf, occ)
         now = suitable(model, thr, cur, env)
-        fut, extrap = {}, {}
+        now_raw = suitable(model, thr, cur, env, raw=True)  # same model, no envelope guard: brackets the result
+        fut, fut_raw, extrap = {}, {}, {}
         for k, v in futs.items():
             rawf = suitable(model, thr, v, env, raw=True)
+            fut_raw[k] = rawf
             fut[k] = rawf & analog(np.nan_to_num(v, nan=np.inf), env)
             extrap[k] = 100 * area[rawf & ~fut[k]].sum() / max(area[rawf].sum(), 1e-9)  # share of raw suitable area removed
         a_now = area[now].sum()
+        a_now_raw = area[now_raw].sum()
         pct = lambda a: float("nan") if a_now == 0 else 100 * (1 - a / a_now)
+        pct_raw = lambda a: float("nan") if a_now_raw == 0 else 100 * (1 - a / a_now_raw)
         for k, f in fut.items():
             scen.append(dict(species=sp, scenario=k, area_2050_km2=area[f].sum(), loss_pct=pct(area[f].sum()),
-                             lost_km2=area[now & ~f].sum(), gained_km2=area[f & ~now].sum(), extrapolated_pct=extrap[k]))
+                             lost_km2=area[now & ~f].sum(), gained_km2=area[f & ~now].sum(), extrapolated_pct=extrap[k],
+                             loss_pct_unguarded=pct_raw(area[fut_raw[k]].sum())))
         a50 = float(np.mean([area[f].sum() for f in fut.values()]))
         rows.append(dict(species=sp, n_records=len(occ), area_now_km2=round(a_now), area_2050_km2=round(a50),
                          loss_pct=round(pct(a50), 1), auc=round(auc, 3),
                          lost_km2=round(np.mean([area[now & ~f].sum() for f in fut.values()])),
                          gained_km2=round(np.mean([area[f & ~now].sum() for f in fut.values()])),
-                         extrapolated_pct=round(float(np.mean(list(extrap.values()))), 1)))
+                         extrapolated_pct=round(float(np.mean(list(extrap.values()))), 1),
+                         loss_pct_unguarded=round(pct_raw(float(np.mean([area[r].sum() for r in fut_raw.values()]))), 1)))
         agree = np.mean([f for f in fut.values()], axis=0)  # share of scenarios calling the cell suitable
         for tag, grid in (("now", now.astype(float)), ("2050", agree)):
             plt.figure(figsize=(6, 4.5)); plt.imshow(np.ma.masked_where(grid == 0, grid), cmap="YlGn", vmin=0, vmax=1)
