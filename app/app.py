@@ -282,7 +282,7 @@ elif page == "Species Explorer":
 
 elif page == "Climate Explorer":
     st.header("Climate Explorer")
-    st.caption("WorldClim CMIP6, period 2041–2060 (not yearly values). Habitat = Random Forest suitability above a 10th-percentile threshold. Negative area change means a modelled gain.")
+    st.caption("WorldClim CMIP6, period 2041–2060 (not yearly values). Habitat = Random Forest suitability above a TSS-optimal threshold, counted only inside each plant's climate envelope. Negative area change means a modelled gain.")
     if scen is not None and len(scen):
         choices = {"Mean across all 6 GCM runs": None, "SSP2-4.5 · mean across GCMs": "ssp245", "SSP5-8.5 · mean across GCMs": "ssp585"}
         pick = st.selectbox("Climate projection", list(choices))
@@ -372,7 +372,7 @@ else:  # Data & Methods
     with st.expander("Methods"):
         st.markdown("- GBIF records cleaned (coordinate uncertainty < 5 km, duplicates removed, one record per 2.5 arc-minute cell).\n"
                     "- Random Forest presence/background model on WorldClim bioclimatic variables; AUC from 1-degree spatial block cross-validation.\n"
-                    "- Projections for 2041–2060 under SSP2-4.5 and SSP5-8.5; threshold = 10th percentile of held-out presences.\n"
+                    "- Projections for 2041–2060 under SSP2-4.5 and SSP5-8.5; threshold = value maximising TSS on held-out blocks; weakly correlated bioclim variables only; suitability counted only where every variable lies inside the range seen at the plant's presence records (a Random Forest cannot extrapolate).\n"
                     f"- Risk class from projected loss: Low < {LOW}%, Medium < {HIGH}%, High otherwise. This is our own convention, not an IUCN category.\n"
                     "- Chemical twins: Jaccard similarity of LOTUS compound sets (InChIKey skeleton), same plant family, species level only, at least 5 compounds each.")
     with st.expander("How to read the numbers"):

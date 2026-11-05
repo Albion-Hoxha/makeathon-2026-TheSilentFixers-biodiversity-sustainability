@@ -26,7 +26,8 @@ Species and region live in `src/config.py`. Put climate code in `src/climate/`, 
 Download WorldClim 2.1 bioclim (2.5 arcmin) for the current climate, and CMIP6 2041-2060 (SSP2-4.5 and SSP5-8.5, 2-3 GCMs). Each file must be ONE multi-band GeoTIFF with the 19 bio variables in the same band order. Save as `data/climate/current.tif` and `data/climate/future_<scenario>_<gcm>.tif` (the WorldClim future files are already multi-band; for the current climate stack the 19 `bio_*.tif` files, e.g. `gdal_merge.py -separate`).
 
 ## Method notes
-Random Forest presence/background model (not MaxEnt: fewer dependencies, same idea), one presence per 2.5' cell, 5000 background cells, 1-degree spatial block CV for AUC, suitability threshold = 10th percentile of held-out presences. Twins: Jaccard similarity on InChIKey skeletons (first 14 chars) between species of the same family, at least 5 compounds each.
+Random Forest presence/background model (not MaxEnt: fewer dependencies, same idea), one presence per 2.5' cell, 5000 background cells, 1-degree spatial block CV for AUC, suitability threshold = the value maximising TSS on held-out blocks. Twins: Jaccard similarity on InChIKey skeletons (first 14 chars) between species of the same family, at least 5 compounds each.
+v2 guards: only weakly correlated bioclim variables (|r| < 0.8); suitability is counted only inside the species' climate envelope (every variable within the range seen at its presence records), because a Random Forest cannot extrapolate and otherwise calls warmer-than-observed cells suitable. `risk.csv` also reports `lost_km2`, `gained_km2` and `extrapolated_pct` (share of raw suitable area removed by the envelope). Known limit: planted garden records cannot be separated in GBIF (establishmentMeans is empty).
 
 ## Species and a data-gap finding
 Modelled species: *Salvia officinalis, Gentiana lutea, Arnica montana, Origanum vulgare, Hypericum perforatum*.
