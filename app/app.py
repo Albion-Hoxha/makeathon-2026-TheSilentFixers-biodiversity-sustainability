@@ -207,7 +207,7 @@ if page == "Overview":
     worst = projected_losses.loc[projected_losses.loss_pct.idxmax()] if len(projected_losses) else None
     st.markdown(T.kpis([
         ("Species modelled", len(risk), "plants with enough data"),
-        ("Mean projected area change", fmt(risk.loss_pct.mean(), "{:+.1f}", "%"), "2041–2060 · negative = gain"),
+        ("Mean projected area loss" if not risk.loss_pct.mean() < 0 else "Mean projected area gain", fmt(abs(risk.loss_pct.mean()), "{:.1f}", "%"), "2041–2060 · mean of the five species"),
         ("Largest projected loss", worst.species if worst is not None else "None projected", fmt(worst.loss_pct if worst is not None else float("nan"), "{:.1f}", "% of suitable area")),
         ("Chemical twin pairs", len(twins), "Jaccard-ranked candidates"),
         ("Mean spatial-CV AUC", fmt(risk.auc.mean(), "{:.2f}"), "model skill on held-out regions")]), unsafe_allow_html=True)
@@ -334,7 +334,10 @@ elif page == "Chemical Twins":
 
 elif page == "Risk Analytics":
     st.header("Risk Analytics")
-    st.dataframe(risk[["species", "cls", "n_records", "area_now_km2", "area_2050_km2", "loss_pct", "auc"]].rename(columns={"cls": "risk class"}), hide_index=True)
+    cols = ["species", "cls", "n_records", "area_now_km2", "area_2050_km2", "loss_pct"] + (["loss_pct_unguarded"] if "loss_pct_unguarded" in risk else []) + ["auc"]
+    st.dataframe(risk[cols].rename(columns={"cls": "risk class", "loss_pct": "loss (%)", "loss_pct_unguarded": "loss without envelope guard (%)"}), hide_index=True)
+    if "loss_pct_unguarded" in risk:
+        st.caption("Two estimates from the same model: with the climate-envelope guard (conservative) and without it (a Random Forest extrapolating into warmer-than-observed climate). The result depends on this choice, so the true change lies between them; negative values are gains.")
     st.caption("AUC is computed on held-out 1-degree spatial blocks. Values near 0.5 indicate little discrimination; record count is a data-coverage indicator, not a guarantee of model quality.")
     fig = go.Figure()
     for cls in [c for c in ["Low", "Medium", "High", "n/a"] if c in set(risk.cls)]:
