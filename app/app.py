@@ -349,10 +349,10 @@ elif page == "Risk Analytics":
 
 elif page == "Conservation":
     st.header("Conservation")
-    st.info("This is a screening view, not a conservation-status assessment. The model identifies projected suitable-area change; it does not measure population trends, harvest pressure or whether an action works.")
+    st.info("Climate-suitability screening only: this is not a conservation-status assessment. The model does not measure population trends or whether a conservation action works. No harvest-pressure data were included, so harvesting is not assessed here.")
     st.dataframe(risk.sort_values("loss_pct", ascending=False)[["species", "cls", "loss_pct", "n_records"]].rename(columns={
         "cls": "screening category", "loss_pct": "Area change index (%) · positive = loss", "n_records": "GBIF records"}), hide_index=True, use_container_width=True)
-    st.warning("Protected-area overlap is not calculated: WDPA data are not integrated in this project yet. Do not interpret this page as showing how much habitat is protected.")
+    st.warning("Protected-area overlap was not calculated because WDPA data are not integrated. This page does not show how much habitat is protected. IUCN Red List status has not been assessed for the Chemical Twins candidates.")
     st.markdown('<div class="grid">' + T.card("Monitor", "<p>Prioritise field monitoring where projected loss is highest.</p>") +
                 T.card("Protect", "<p>Check overlap with protected areas. WDPA overlay is not integrated yet.</p>") +
                 T.card("Cultivate", "<p>Controlled cultivation is a research direction, not a finding.</p>") + "</div>", unsafe_allow_html=True)
@@ -368,7 +368,7 @@ else:  # Data & Methods
     st.dataframe(coverage, hide_index=True, use_container_width=True)
     with st.expander("Data sources and licences", expanded=True):
         st.markdown("| Data | Source | Licence |\n|---|---|---|\n| Occurrences | GBIF | CC0 / CC-BY |\n| Climate | WorldClim 2.1 (CMIP6) | CC-BY 4.0 |\n"
-                    "| Natural products | LOTUS via Wikidata | CC0 |\n| Conservation context | IUCN, WDPA (not integrated yet) | non-commercial terms, cite |")
+                    "| Natural products | LOTUS via Wikidata | CC0 |\n| Conservation context | IUCN Red List / WDPA | Non-commercial terms; neither is integrated as an analysis result |")
     with st.expander("Methods"):
         st.markdown("- GBIF records cleaned (coordinate uncertainty < 5 km, duplicates removed, one record per 2.5 arc-minute cell).\n"
                     "- Random Forest presence/background model on WorldClim bioclimatic variables; AUC from 1-degree spatial block cross-validation.\n"
@@ -391,8 +391,11 @@ else:  # Data & Methods
                     f"and LOTUS only {g.get('lotus_compounds', '?')} compounds (minimum 5). It is reported as **insufficient data**, not as a modelled species. "
                     "(It does have an EU traditional-use herbal monograph, so the gap is in occurrence and chemistry data, not in interest.)")
     with st.expander("Limitations"):
-        st.markdown("GBIF sampling bias; climate-model disagreement (see scenario ranges); habitat suitability is not abundance or extinction risk; "
-                    "chemical similarity is not medicinal equivalence. Nothing here is medical advice.")
+        st.markdown("- **Protected areas:** WDPA data are not integrated and no protected-area overlap was calculated.\n"
+                    "- **Conservation status:** IUCN Red List status is not assessed for Chemical Twins candidates.\n"
+                    "- **Harvesting:** no harvest-pressure data were included; harvesting is not quantified by this project.\n"
+                    "- **Climate model:** GBIF sampling bias and climate-model disagreement remain; see scenario ranges. Suitable habitat is not abundance, a population trend or extinction risk.\n"
+                    "- **Chemical Twins:** LOTUS coverage varies; chemical similarity is not medicinal equivalence. Nothing here is medical advice.")
     credits = ROOT / "app" / "assets" / "credits.json"
     if credits.exists():
         with st.expander("Photo credits (Wikimedia Commons)"):
