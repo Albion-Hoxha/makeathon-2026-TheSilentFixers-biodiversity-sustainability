@@ -198,7 +198,7 @@ def loss_bars(col):
     d = risk.sort_values(col)
     fig = go.Figure(go.Bar(x=d[col], y=d.species, orientation="h", marker_color=[COLOR[c] for c in d.cls]))
     fig.add_vline(x=0, line_dash="dash", line_color="#D9B85F", opacity=.8)
-    fig.update_xaxes(title="Projected change in suitable area, 2041–2060 (%) · negative = gain", gridcolor="#14473d", zeroline=False)
+    fig.update_xaxes(title="Projected suitable-area loss, 2041–2060 (%) · negative = gain", gridcolor="#14473d", zeroline=False)
     return T.style(fig, 280)
 
 
@@ -297,13 +297,13 @@ elif page == "Climate Explorer":
         col = "scenario_loss"
         rng = selected_runs[selected_runs.species == sp].sort_values("loss_pct")
         if len(rng):
-            st.info(f"{sp}: projected area change ranges from {rng.loss_pct.min():+.1f}% to {rng.loss_pct.max():+.1f}% across {len(rng)} GCM runs; negative values are gains.")
+            st.info(f"{sp}: projected suitable-area loss ranges from {rng.loss_pct.min():.1f}% to {rng.loss_pct.max():.1f}% across {len(rng)} GCM runs (a negative value would be a gain).")
             run_labels = rng.scenario.str.replace("ssp245", "SSP2-4.5", regex=False).str.replace("ssp585", "SSP5-8.5", regex=False).str.replace("_", " · ", regex=False)
             fig = go.Figure(go.Bar(x=rng.loss_pct, y=run_labels, orientation="h",
                                    marker_color=[COLOR["Low"] if v < 0 else COLOR[risk_class(v)] for v in rng.loss_pct],
                                    hovertemplate="%{y}<br>Area change: %{x:.1f}%<extra></extra>"))
             fig.add_vline(x=0, line_dash="dash", line_color="#D9B85F")
-            fig.update_layout(title=f"GCM range for {sp}", xaxis_title="Projected suitable-area change (%)", yaxis_title="", showlegend=False)
+            fig.update_layout(title=f"GCM range for {sp}", xaxis_title="Projected suitable-area loss (%) · negative = gain", yaxis_title="", showlegend=False)
             st.plotly_chart(T.style(fig, max(230, 42 * len(rng))), use_container_width=True)
     else:
         st.info("Per-scenario results (risk_scenarios.csv) appear after the climate model has run.")
