@@ -216,7 +216,10 @@ if page == "Overview":
         ("Mean spatial-CV AUC", fmt(risk.auc.mean(), "{:.2f}"), "model skill on held-out regions")]), unsafe_allow_html=True)
     gains = int((risk.loss_pct < 0).sum())
     losses = int((risk.loss_pct > 0).sum())
-    st.caption(f"Across the five species, the model projects suitable-area gains for {gains} and losses for {losses}. Area change is not a population trend or extinction probability.")
+    flips = int(((risk.loss_pct > 0) != (risk.loss_pct_unguarded > 0)).sum()) if "loss_pct_unguarded" in risk else None
+    st.caption(f"With the climate-envelope guard, the model projects suitable-area gains for {gains} and losses for {losses} of the five species" +
+               (f"; without it the direction changes for {flips}, so those results are uncertain." if flips else ".") +
+               " Area change is not a population trend or extinction probability.")
     a, b = st.columns([3, 2])
     with a:
         with panel("Habitat map: " + sp):
