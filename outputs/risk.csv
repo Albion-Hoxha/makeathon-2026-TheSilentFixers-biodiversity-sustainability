@@ -1,6 +1,6 @@
-species,n_records,area_now_km2,area_2050_km2,loss_pct,auc,lost_km2,gained_km2,extrapolated_pct
-Salvia officinalis,1531,101839,79942,21.5,0.787,66382,44485,51.1
-Gentiana lutea,780,42095,7884,81.3,0.912,35178,967,10.0
-Arnica montana,163,20387,5910,71.0,0.918,15253,777,65.2
-Origanum vulgare,860,101669,72728,28.5,0.726,60455,31515,30.2
-Hypericum perforatum,1382,142784,120035,15.9,0.723,78156,55407,44.5
+species,n_records,area_now_km2,area_2050_km2,loss_pct,auc,lost_km2,gained_km2,extrapolated_pct,loss_pct_unguarded
+Salvia officinalis,1531,101839,79942,21.5,0.787,66382,44485,51.1,-58.0
+Gentiana lutea,780,42095,7884,81.3,0.912,35178,967,10.0,80.0
+Arnica montana,163,20387,5910,71.0,0.918,15253,777,65.2,38.1
+Origanum vulgare,860,101669,72728,28.5,0.726,60455,31515,30.2,-0.6
+Hypericum perforatum,1382,142784,120035,15.9,0.723,78156,55407,44.5,-49.4
