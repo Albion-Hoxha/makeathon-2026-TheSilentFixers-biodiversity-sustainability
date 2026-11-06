@@ -27,7 +27,7 @@ def test_every_page_runs_on_sample_data(page, monkeypatch, tmp_path):
 @pytest.mark.parametrize("page", PAGES)
 def test_real_files_replace_sample_and_drive_numbers(page, monkeypatch, tmp_path):
     pd.DataFrame({"species": ["Salvia officinalis", "Gentiana lutea"], "n_records": [500, 200], "area_now_km2": [9000, 4000],
-                  "area_2050_km2": [7000, 1000], "loss_pct": [22.2, 75.0], "auc": [0.91, float("nan")]}).to_csv(tmp_path / "risk.csv", index=False)
+                  "area_2050_km2": [7000, 1000], "loss_pct": [22.2, 75.0], "loss_pct_unguarded": [-30.0, 60.0], "auc": [0.91, float("nan")]}).to_csv(tmp_path / "risk.csv", index=False)
     pd.DataFrame({"species": ["Salvia officinalis"], "twin": ["Salvia pratensis"], "similarity": [0.42],
                   "twin_iucn_status": ["not assessed"], "ema_evidence": ["traditional use"]}).to_csv(tmp_path / "twins.csv", index=False)
     pd.DataFrame({"species": ["Salvia officinalis"] * 2, "scenario": ["ssp245_a", "ssp585_a"], "area_2050_km2": [1, 1],

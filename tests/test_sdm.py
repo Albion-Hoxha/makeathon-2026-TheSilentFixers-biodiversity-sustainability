@@ -40,3 +40,4 @@ def test_warm_species_does_not_get_runaway_gains_from_extrapolation(tmp_path):
     # Without the envelope guard a Random Forest calls every cell warmer than any presence "suitable" -> huge fake gain
     r = _run(tmp_path, lambda t: t > np.percentile(t, 75), 3)
     assert r.loss_pct > -10, r.to_dict()  # old code (no guard) gave about -21 here
+    assert r.loss_pct_unguarded < r.loss_pct - 5, r.to_dict()  # the unguarded column must show the extrapolated gain
