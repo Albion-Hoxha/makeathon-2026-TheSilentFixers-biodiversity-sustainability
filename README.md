@@ -108,7 +108,7 @@ Data were retrieved between 2026-11-04 and 2026-11-06. Large climate rasters are
 3. Candidates are same-family **species** (no genus-level items) with at least 5 skeletons. Ranking uses Jaccard similarity.
 4. Each candidate is annotated with its EU herbal monograph status (`data/ema_monographs.csv`, built and checked by `scripts/build_ema_table.py`) and its global IUCN category from two secondary copies, GBIF and Wikidata (`scripts/fetch_iucn.py`). Synonyms are resolved to the accepted name (for example *Rosmarinus officinalis* to *Salvia rosmarinus*). "not checked" means the category was not looked up.
 
-**Dashboard** (`app/`): seven pages (Overview, Species Explorer, Climate Explorer, Chemical Twins, Risk Analytics, Conservation, Data & Methods). Every number is read from `outputs/*.csv`.
+**Dashboard** (`app/`): seven pages (Overview, Species Explorer, Climate Explorer, Chemical Twins, Risk Analytics, Conservation, Data & Methods). Results are read from `outputs/risk.csv`, `outputs/risk_scenarios.csv` (optional) and `outputs/twins.csv`. The app also reads `data/ema_monographs.csv`, `data/iucn_status.csv`, `data/lotus_compounds.csv`, the GBIF records (`data/occurrences.csv`, or the bundled `app/assets/occurrences.csv`) and the photos in `app/assets/`. If `risk.csv` or `twins.csv` is missing it falls back to `outputs/sample_*.csv` under a yellow SAMPLE DATA banner.
 
 ## 7. Quick start
 

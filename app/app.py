@@ -1,6 +1,6 @@
 """Vanishing Apothecary dashboard. Run: streamlit run app/app.py
 Reads outputs/risk.csv, risk_scenarios.csv (optional), twins.csv; falls back to outputs/sample_*.csv with a visible banner.
-Every number shown comes from those files; nothing is hardcoded."""
+Results come from those files; EMA status, IUCN, LOTUS compounds, GBIF records and photos come from data/ and app/assets/. No result number is hardcoded."""
 import json, math, os, sys
 from pathlib import Path
 import pandas as pd
