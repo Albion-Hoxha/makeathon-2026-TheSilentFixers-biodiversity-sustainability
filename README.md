@@ -52,4 +52,4 @@ GBIF (CC0/CC-BY), WorldClim 2.1 (CC-BY 4.0), LOTUS (CC0), EMA herbal monographs 
 Chemical similarity does not imply equal therapeutic effect: twins are research candidates, not medical substitutes. Sample files in `outputs/sample_*.csv` are placeholders, not results.
 
 ## AI usage
-Claude (Anthropic) and GitHub Copilot assisted with code scaffolding and documentation. The team reviews all results.
+Claude (Anthropic) and Codex assisted with code scaffolding and documentation. The team reviews all results.
