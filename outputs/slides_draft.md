@@ -103,7 +103,7 @@ Draft of 9 slides. Climate results below use the current guarded model outputs; 
 - *Gentiana lutea* has the lowest LOTUS coverage (97), followed by *Arnica montana* (122); both exceed the five-compound minimum.
 - Across 25 pairs, **4** are labelled EMA “traditional use” and **21** “no EU monograph.” The label describes monograph evidence, not therapeutic equivalence.
 - EMA lists the sage monograph under *Rosmarinus officinalis*; the accepted botanical name is *Salvia rosmarinus*.
-- Candidate IUCN labels in the dashboard use the GBIF checklist copy: all 25 candidate rows are “Not Evaluated” there. This is not a claim that no regional assessment exists.
+Candidate IUCN labels: 24 Not Evaluated, 1 sources disagree (Origanum dictamnus: Least Concern in GBIF, Near Threatened in Wikidata); regional/national assessments are not included.
 
 **Caution:** Jaccard measures overlap in database records. Chemical overlap does not establish equal medicinal effect, safety or substitutability. Twins are research candidates only.
 
