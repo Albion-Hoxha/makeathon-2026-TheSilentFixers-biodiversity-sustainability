@@ -1,55 +1,184 @@
-# Vanishing Apothecary: Climate Risk & Chemical Twins
-EthnoHack 2026 · Track 3 (Biodiversity & Sustainability), linked to Track 2 (Natural Products)
+# Vanishing Apothecary: Climate Risk & Chemical Twins for Balkan Medicinal Plants
 
-Where will Balkan medicinal plants lose their habitat by 2050, and which chemically similar plants could take the harvesting pressure off them?
+**Team TheSilentFixers** · EthnoHack 2026 · **Track 3: Biodiversity & Sustainability** (linked to Track 2: Natural Products)
 
-## Quick start
+> Where could the suitable climate of Balkan medicinal plants change by 2041–2060, and which chemically similar plants might be candidates to take pressure off wild harvesting?
+
+| | |
+|---|---|
+| Devpost | https://devpost.com/software/vanishing-apothecary-climate-risk-chemical-twins |
+| Pitch video | [add the YouTube link after upload] |
+| Slides | [add the link after upload] |
+| Live dashboard | [add the link, or run it locally: see Quick start] |
+
+---
+
+## 1. Challenge and problem
+
+Wild medicinal plants of the Western Balkans are collected for local use and wider trade, and there are reports of unsustainable harvesting for some species. At the same time, climate change may shift or shrink the areas where these plants can grow. We did not find a regional, species-level assessment for the Western Balkans that combines **future climate suitability** with **chemically similar species** and an **evidence check against EU herbal monographs**.
+
+**Our question:** for five widely used medicinal plants, how does modelled suitable area change by 2041–2060, and which same-family plants share the most recorded natural-product skeletons with them?
+
+**What this project is not:** it does not measure harvest pressure, population size or extinction risk, and it does not claim that any plant can replace another medicinally. "Chemical twins" are research candidates only.
+
+## 2. Key results
+
+### Climate suitability, 2041–2060 (mean of 6 GCM/scenario runs)
+
+| Species | GBIF records | Suitable now (km²) | 2041–2060, with guard (km²) | Loss with guard (%) | Range across runs (%) | Loss without guard (%) | Spatial-CV AUC | Raw suitable area removed by guard (%) |
+|---|---|---|---|---|---|---|---|---|
+| *Gentiana lutea* L. | 780 | 42,095 | 7,884 | **81.3** | 70.7–91.0 | 80.0 | 0.912 | 10.0 |
+| *Arnica montana* L. | 163 | 20,387 | 5,910 | **71.0** | 57.6–82.5 | 38.1 | 0.918 | 65.2 |
+| *Origanum vulgare* L. | 860 | 101,669 | 72,728 | 28.5 | 14.1–36.5 | -0.6 | 0.726 | 30.2 |
+| *Salvia officinalis* L. | 1,531 | 101,839 | 79,942 | 21.5 | 5.7–41.2 | -58.0 | 0.787 | 51.1 |
+| *Hypericum perforatum* L. | 1,382 | 142,784 | 120,035 | 15.9 | 6.9–30.3 | -49.4 | 0.723 | 44.5 |
+
+Negative values are modelled **gains**. "With guard" counts suitable area only inside each plant's observed climate range (conservative). "Without guard" lets the Random Forest extrapolate into warmer-than-observed climate. Both come from the same model (`outputs/risk.csv`, per-run values in `outputs/risk_scenarios.csv`).
+
+**Reading the result.** Both mountain plants lose suitable area under both estimates (*Gentiana lutea* about 80%, *Arnica montana* 38–71%), so this finding is robust. For the three widespread species the direction depends on the assumption: with the guard they lose 16–29%, without it *Origanum* is about unchanged and *Salvia* and *Hypericum* appear to gain. Those gains rely on extrapolation beyond the observed climate and should not be trusted. The result is therefore **robust for mountain plants and uncertain for widespread ones**. The guarded numbers are a conservative, pessimistic estimate, not a prediction.
+
+### Chemical twins (top candidate per plant)
+
+From `outputs/twins.csv`. Jaccard = shared LOTUS compound skeletons ÷ all unique skeletons across the pair. IUCN category is read from GBIF's copy of the IUCN Red List checklist and cross-checked against Wikidata (`data/iucn_status.csv`, retrieved 2026-11-06). Where the two disagree we show "sources disagree" instead of guessing.
+
+| Focal plant | Top same-family candidate | Jaccard | EU monograph (EMA) | IUCN (via GBIF) |
+|---|---|---|---|---|
+| *Salvia officinalis* | *Salvia rosmarinus* (formerly *Rosmarinus officinalis*) | 0.290 | traditional use | Not Evaluated |
+| *Gentiana lutea* | *Gentianella campestris* | 0.275 | none | Not Evaluated |
+| *Arnica montana* | *Arnica chamissonis* | 0.114 | none | Not Evaluated |
+| *Origanum vulgare* | *Thymus longicaulis* | 0.281 | none | Not Evaluated |
+| *Hypericum perforatum* | *Hypericum maculatum* | 0.221 | none | Not Evaluated |
+
+Across all 25 ranked pairs only 4 have an EU monograph. Scores are low (about 0.1–0.3). Jaccard on database records reflects how well each species has been studied, so it measures overlap in the literature as much as in chemistry. Of the 28 plants and candidates, 2 are Least Concern in both sources (*Salvia officinalis*, *Arnica montana*), 1 has conflicting categories (*Origanum dictamnus*: Least Concern in GBIF, Near Threatened in Wikidata) and 25 have no global assessment in either source. These are global categories only: regional and national assessments (for example the European Red List of Medicinal Plants or national red lists) are not included and can differ.
+
+### Data-gap finding
+
+*Sideritis scardica* (Greek mountain tea) was planned but **cannot be modelled**. On 2026-11-04 GBIF had 43 records in our region (23 usable after quality filters, minimum 30) and LOTUS/Wikidata only 2 compounds (minimum 5). We report it as insufficient data instead of forcing a model. It does have an EU traditional-use herbal monograph, so the gap is in occurrence and chemistry data.
+
+## 3. Screenshots and demo
+
+Real screenshots of the running dashboard (data as of 2026-11-06):
+
+![Overview](docs/screenshots/01_overview.jpg)
+![Climate Explorer](docs/screenshots/04_climate_explorer_gentiana.jpg)
+![Chemical Twins](docs/screenshots/05_chemical_twins.jpg)
+![Risk Analytics: with and without the guard](docs/screenshots/06_risk_analytics.jpg)
+
+More: [species explorer](docs/screenshots/03_species_explorer.jpg), [overview, lower part](docs/screenshots/02_overview_lower.jpg), [data and methods](docs/screenshots/07_data_and_methods.jpg).
+
+Demo video: [add the YouTube link after upload]
+
+The dashboard shows a yellow **SAMPLE DATA** banner whenever it falls back to placeholder files.
+
+## 4. Technologies
+
+- **Language:** Python 3
+- **Data and modelling:** pandas, NumPy, scikit-learn (Random Forest, spatial block cross-validation), rasterio, matplotlib, requests
+- **Dashboard:** Streamlit, Plotly
+- **Testing:** pytest (including dashboard tests with Streamlit's `AppTest`)
+- **Data services:** GBIF API, WorldClim 2.1 / CMIP6, Wikidata SPARQL (LOTUS), EMA herbal monographs, Wikimedia Commons (photos)
+
+## 5. Data sources and licences
+
+| Data | Source | Licence / terms | Used for |
+|---|---|---|---|
+| Species occurrences | [GBIF](https://www.gbif.org) | CC0 / CC-BY, per record | Presence records, observed-records map |
+| Climate (1970–2000 baseline and CMIP6 2041–2060; GCMs ACCESS-CM2, MIROC6, MPI-ESM1-2-HR; SSP2-4.5 and SSP5-8.5) | [WorldClim 2.1](https://worldclim.org) | CC-BY 4.0 | Bioclimatic predictors |
+| Plant natural products | [LOTUS](https://lotus.naturalproducts.net) via Wikidata | CC0 | Chemical twins |
+| EU herbal monograph status | [EMA / HMPC](https://www.ema.europa.eu), overview EMA/HMPC/228356/2012 Rev. 2 (March 2023) | Public, EMA must be cited | Evidence level (`data/ema_monographs.csv`) |
+| IUCN Red List category (global) and accepted names | GBIF species API (GBIF's copy of the IUCN checklist) and Wikidata P141 | IUCN terms: non-commercial use, cite IUCN | `data/iucn_status.csv` |
+| Species photos and hero image | Wikimedia Commons | CC BY-SA / public domain, credits in `app/assets/credits.json` and on the dashboard Methods page | Dashboard |
+| WDPA protected areas | not integrated | non-commercial terms, cite | Planned |
+
+Data were retrieved between 2026-11-04 and 2026-11-06. Large climate rasters are **not** in the repository (see Quick start).
+
+## 6. Method
+
+**Climate suitability** (`src/climate/sdm.py`)
+1. GBIF records are filtered (coordinate uncertainty below 5 km, year 1970 or later, duplicates and living specimens removed) and thinned to one presence per 2.5 arc-minute cell.
+2. Weakly correlated bioclimatic variables are selected (|r| < 0.8).
+3. A Random Forest is trained on presences against 5,000 background cells. Skill is measured by AUC on held-out 1° spatial blocks.
+4. The suitability threshold maximises TSS on those held-out blocks.
+5. Suitable area is counted **only inside each species' climate envelope**, meaning cells where every variable lies within the range seen at that species' presence records. A Random Forest cannot extrapolate: without this guard it labels any warmer-than-observed cell as suitable, which produced inflated gains in an earlier version of our analysis. The share of raw suitable area removed by the guard is reported as `extrapolated_pct`, and the unguarded result as `loss_pct_unguarded`, so the result can be read as a range.
+6. Projections for 2041–2060 under SSP2-4.5 and SSP5-8.5 with three GCMs. Outputs report net change, area lost, area gained and the range across runs.
+
+**Chemical twins** (`src/chemistry/twins.py`)
+1. Taxon–compound pairs are read from LOTUS via Wikidata (P703, P235) for the plant families of our species.
+2. Compounds are compared by the first 14 characters of their InChIKey, so stereoisomers count as one skeleton.
+3. Candidates are same-family **species** (no genus-level items) with at least 5 skeletons. Ranking uses Jaccard similarity.
+4. Each candidate is annotated with its EU herbal monograph status (`data/ema_monographs.csv`, built and checked by `scripts/build_ema_table.py`) and its global IUCN category from two secondary copies, GBIF and Wikidata (`scripts/fetch_iucn.py`). Synonyms are resolved to the accepted name (for example *Rosmarinus officinalis* to *Salvia rosmarinus*). "not checked" means the category was not looked up.
+
+**Dashboard** (`app/`): seven pages (Overview, Species Explorer, Climate Explorer, Chemical Twins, Risk Analytics, Conservation, Data & Methods). Every number is read from `outputs/*.csv`.
+
+## 7. Quick start
+
 ```bash
 pip install -r requirements.txt
-python -m src.climate.fetch_gbif     # -> data/occurrences.csv
-python -m src.climate.sdm            # needs data/climate/current.tif + future_*.tif -> outputs/risk.csv + maps
-python -m src.chemistry.twins        # -> data/lotus_compounds.csv, outputs/twins.csv
-python -m pytest -q                  # tests on synthetic data
-streamlit run app/app.py             # dashboard (shows SAMPLE DATA banner until outputs/risk.csv exists)
+python -m src.climate.fetch_gbif      # GBIF records -> data/occurrences.csv
+python -m src.chemistry.twins         # LOTUS compounds -> data/lotus_compounds.csv, outputs/twins.csv
+python scripts/fetch_iucn.py          # IUCN categories + accepted names -> data/iucn_status.csv
+python -m src.chemistry.twins         # run again so twins.csv picks up the IUCN categories
+python -m src.climate.sdm             # needs the climate rasters below -> outputs/risk.csv, risk_scenarios.csv, maps
+python -m pytest -q                   # tests on synthetic data
+streamlit run app/app.py              # dashboard
 ```
 
-## Who does what (hand-off files must keep these exact columns)
-| Owner | Work | Output |
-|---|---|---|
-| Afron (climate) | GBIF + WorldClim -> MaxEnt (`elapid`), now vs 2050 (SSP2-4.5, SSP5-8.5), spatial CV | `outputs/risk.csv`: `species,n_records,area_now_km2,area_2050_km2,loss_pct,auc` and maps `outputs/maps/<species>_now.png`, `<species>_2050.png` |
-| Rinesa (chemistry + app) | LOTUS via Wikidata SPARQL (P703), Jaccard/Tanimoto similarity, dashboard, slides | `outputs/twins.csv`: `species,twin,similarity,twin_iucn_status,ema_evidence` (`twins.py` writes it all, including the EMA column) |
-| Albion (lead) | integration, deploy, Devpost, video | |
+The repository already contains the outputs of these steps, so the dashboard runs right after `pip install` without any download. On Windows use `py -m` instead of `python -m`, for example `py -m streamlit run app/app.py`.
 
-Species and region live in `src/config.py`. Put climate code in `src/climate/`, chemistry in `src/chemistry/`.
+**Climate rasters (not in git).** Download WorldClim 2.1 bioclimatic variables at 2.5 arc-minutes for the current climate and CMIP6 2041–2060 for SSP2-4.5 and SSP5-8.5. Each file must be one multi-band GeoTIFF with the 19 variables in the order bio1 to bio19 (stack `bio_1 … bio_19` numerically, not alphabetically). Save as `data/climate/current.tif` and `data/climate/future_<scenario>_<gcm>.tif`, for example `future_ssp245_MIROC6.tif`.
 
-## Climate rasters (not in git)
-Download WorldClim 2.1 bioclim (2.5 arcmin) for the current climate, and CMIP6 2041-2060 (SSP2-4.5 and SSP5-8.5, 2-3 GCMs). Each file must be ONE multi-band GeoTIFF with the 19 bio variables in the same band order. Save as `data/climate/current.tif` and `data/climate/future_<scenario>_<gcm>.tif` (the WorldClim future files are already multi-band; for the current climate stack the 19 `bio_*.tif` files, e.g. `gdal_merge.py -separate`).
+**API keys:** none are needed. GBIF, Wikidata, WorldClim and EMA pages are queried without credentials, so there is nothing to configure.
 
-## Method notes
-Random Forest presence/background model (not MaxEnt: fewer dependencies, same idea), one presence per 2.5' cell, 5000 background cells, 1-degree spatial block CV for AUC, suitability threshold = the value maximising TSS on held-out blocks. Twins: Jaccard similarity on InChIKey skeletons (first 14 chars) between species of the same family, at least 5 compounds each.
-v2 guards: only weakly correlated bioclim variables (|r| < 0.8); suitability is counted only inside the species' climate envelope (every variable within the range seen at its presence records), because a Random Forest cannot extrapolate and otherwise calls warmer-than-observed cells suitable. `risk.csv` also reports `lost_km2`, `gained_km2` and `extrapolated_pct` (share of raw suitable area removed by the envelope). Known limit: planted garden records cannot be separated in GBIF (establishmentMeans is empty).
+## 8. Project structure
 
-## Species and a data-gap finding
-Modelled species: *Salvia officinalis, Gentiana lutea, Arnica montana, Origanum vulgare, Hypericum perforatum*.
-*Sideritis scardica* (Greek/Balkan mountain tea) was planned but cannot be modelled: on 2026-11-04 GBIF had 43 records in our region (23 usable after quality filters, below our minimum of 30) and LOTUS/Wikidata only 2 compounds (minimum 5). We report this as a data gap rather than force a model on too little data.
+```
+app/            Streamlit dashboard (app.py, theme.py, assets/ photos + credits)
+src/climate/    GBIF download and species distribution model
+src/chemistry/  LOTUS twins and EMA evidence
+src/config.py   species, region, families, authorities
+scripts/        reproducible helpers (EMA table, IUCN categories, photo download)
+data/           ema_monographs.csv, iucn_status.csv, lotus_compounds.csv, occurrences.csv (climate rasters are not stored)
+outputs/        risk.csv, risk_scenarios.csv, twins.csv, maps/ (sample_*.csv are placeholders)
+docs/           screenshots of the dashboard
+tests/          pytest suite
+```
 
-## Dashboard (app/)
-`streamlit run app/app.py`: 7 pages (Overview, Species Explorer, Climate Explorer, Chemical Twins, Risk Analytics, Conservation, Data & Methods). Every number is read from `outputs/risk.csv`, `risk_scenarios.csv` and `twins.csv`; without them it shows `outputs/sample_*.csv` under a SAMPLE DATA banner. Photos (Wikimedia Commons, CC BY-SA / public domain) are in `app/assets/`, fetched by `scripts/fetch_assets.py`; credits are listed on the Data & Methods page (`app/assets/credits.json`). The Observed-records map uses GBIF occurrences (`app/assets/occurrences.csv`, or `data/occurrences.csv` when present), downloaded 2026-11-04.
+## 9. What we built and what we reused
 
-## EU herbal monograph evidence (EMA)
-`data/ema_monographs.csv` lists species with an EU herbal monograph (well-established or traditional use), read from the EMA overview EMA/HMPC/228356/2012 Rev. 2 (March 2023) and checked against each EMA herbal page (`python scripts/build_ema_table.py`). `twins.py` adds it as `ema_evidence`. It describes the plant's regulatory status, not the chemical similarity.
+| Built by the team during the hackathon | Pre-existing and used as-is |
+|---|---|
+| All code in `src/`, `app/`, `scripts/`, `tests/` | Python libraries: scikit-learn, pandas, NumPy, rasterio, matplotlib, Streamlit, Plotly, requests, pytest |
+| Climate-envelope guard, variable selection, threshold logic and the with/without-guard comparison | Random Forest implementation (scikit-learn) |
+| EMA monograph table, built from the EMA overview and checked against EMA herbal pages | EMA monograph content itself |
+| Twin ranking, evidence and IUCN annotation, dashboard design | GBIF, WorldClim, LOTUS/Wikidata data, GBIF's copy of the IUCN checklist |
+| Selection of species and the data-gap analysis | Wikimedia Commons photographs (credited) |
 
-## API keys
-None needed: GBIF, Wikidata, WorldClim and EMA pages are queried without keys.
+## 10. Limitations and responsible use
 
-## Team workflow
-Work on a branch (`climate`, `chemistry`, `dev`) and merge to `main` through the team lead.
+- **Suitable area is not abundance.** The model estimates where climate resembles that of past records. It does not estimate population size, harvest pressure or extinction probability.
+- **Sampling bias.** GBIF records cluster near roads and cities. Thinning and spatial cross-validation reduce this but do not remove it.
+- **Cultivated plants.** Planted garden records cannot be separated from wild ones because GBIF's `establishmentMeans` is empty for these species.
+- **Extrapolation.** The climate-envelope guard is conservative: it can remove real range shifts into cells outside the sampled climate. For three of five species the direction of change depends on it.
+- **Climate-model disagreement.** Only three GCMs are used. See the per-run ranges.
+- **Chemistry.** Similarity measures overlap of recorded compounds, which depends on research effort. It does not establish equal efficacy or safety. Twins are research candidates, not substitutes.
+- **EMA status** reflects the March 2023 overview and four plant families. Newer monographs may be missing. "No EU monograph" does not mean a plant has no traditional use.
+- **IUCN categories** are global categories from secondary copies (GBIF, Wikidata) and can lag behind iucnredlist.org. Regional and national assessments are not included and can differ: a plant with no global assessment may still be assessed in Europe or listed nationally.
+- **Not included:** field validation, protected-area overlap (WDPA) and harvest-pressure data.
+- **Traditional knowledge.** We did not collect community knowledge. We use published databases and EU regulatory sources only. Any future work with local harvesters must respect provenance, attribution and consent.
+- Nothing here is medical advice or a clinically validated finding.
 
-## Data and licences
-GBIF (CC0/CC-BY), WorldClim 2.1 (CC-BY 4.0), LOTUS (CC0), EMA herbal monographs (public, cite EMA), IUCN Red List and WDPA (non-commercial terms, cite). Photos: Wikimedia Commons, see the dashboard credits.
+## 11. AI usage
 
-## Limits
-Chemical similarity does not imply equal therapeutic effect: twins are research candidates, not medical substitutes. Sample files in `outputs/sample_*.csv` are placeholders, not results.
+Generative AI coding assistants were used for code scaffolding, debugging and documentation drafts; the tools are listed in the Devpost submission. The team selected the species and methods, reviewed the code and every result, and takes responsibility for the content.
 
-## AI usage
-Claude (Anthropic) and Codex assisted with code scaffolding and documentation. The team reviews all results.
+## 12. Team
+
+| Member | Role |
+|---|---|
+| Albion Hoxha | Team lead, integration, deployment, submission |
+| Afron Makolli | Climate and spatial modelling (GBIF pipeline, species distribution models) |
+| Rinesa Sekiraça | Chemistry (LOTUS pipeline, chemical twins), dashboard polish and presentation |
+
+## Licence
+
+Code: MIT (see `LICENSE`). Data and photos keep the licences listed in section 5.

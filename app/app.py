@@ -361,7 +361,7 @@ elif page == "Conservation":
     st.info("Climate-suitability screening only: this is not a conservation-status assessment. The model does not measure population trends or whether a conservation action works. No harvest-pressure data were included, so harvesting is not assessed here.")
     st.dataframe(risk.sort_values("loss_pct", ascending=False)[["species", "cls", "loss_pct", "n_records"]].rename(columns={
         "cls": "screening category", "loss_pct": "Area change index (%) · positive = loss", "n_records": "GBIF records"}), hide_index=True, use_container_width=True)
-    st.warning("Protected-area overlap was not calculated because WDPA data are not integrated. This page does not show how much habitat is protected. IUCN categories come from GBIF's copy of the Red List checklist, not from a conservation assessment of our own.")
+    st.warning("Protected-area overlap was not calculated because WDPA data are not integrated. This page does not show how much habitat is protected. IUCN categories are global ones from GBIF's copy of the Red List checklist and Wikidata, not a conservation assessment of our own; regional and national assessments are not included.")
     st.markdown('<div class="grid">' + T.card("Monitor", "<p>Prioritise field monitoring where projected loss is highest.</p>") +
                 T.card("Protect", "<p>Check overlap with protected areas. WDPA overlay is not integrated yet.</p>") +
                 T.card("Cultivate", "<p>Controlled cultivation is a research direction, not a finding.</p>") + "</div>", unsafe_allow_html=True)
@@ -377,7 +377,7 @@ else:  # Data & Methods
     st.dataframe(coverage, hide_index=True, use_container_width=True)
     with st.expander("Data sources and licences", expanded=True):
         st.markdown("| Data | Source | Licence |\n|---|---|---|\n| Occurrences | GBIF | CC0 / CC-BY |\n| Climate | WorldClim 2.1 (CMIP6) | CC-BY 4.0 |\n"
-                    "| Natural products | LOTUS via Wikidata | CC0 |\n| Conservation context | IUCN Red List category via GBIF checklist (retrieved 2026-11-06); WDPA not integrated | IUCN: non-commercial terms, cite; WDPA not used |")
+                    "| Natural products | LOTUS via Wikidata | CC0 |\n| Conservation context | IUCN Red List global category via GBIF checklist and Wikidata (retrieved 2026-11-06); WDPA not integrated | IUCN: non-commercial terms, cite; WDPA not used |")
     with st.expander("Methods"):
         st.markdown("- GBIF records cleaned (coordinate uncertainty < 5 km, duplicates removed, one record per 2.5 arc-minute cell).\n"
                     "- Random Forest presence/background model on WorldClim bioclimatic variables; AUC from 1-degree spatial block cross-validation.\n"
@@ -401,7 +401,7 @@ else:  # Data & Methods
                     "(It does have an EU traditional-use herbal monograph, so the gap is in occurrence and chemistry data, not in interest.)")
     with st.expander("Limitations"):
         st.markdown("- **Protected areas:** WDPA data are not integrated and no protected-area overlap was calculated.\n"
-                    "- **Conservation status:** IUCN category comes from GBIF's copy of the Red List checklist, which can lag behind iucnredlist.org. \"not checked\" means we did not look it up; it is not IUCN's own \"Not Evaluated\".\n"
+                    "- **Conservation status:** IUCN category is the global category from GBIF's copy of the Red List checklist, cross-checked against Wikidata (\"sources disagree\" where they differ). Both can lag behind iucnredlist.org, and regional or national assessments are not included. \"not checked\" means we did not look it up; it is not IUCN's own \"Not Evaluated\".\n"
                     "- **Harvesting:** no harvest-pressure data were included; harvesting is not quantified by this project.\n"
                     "- **Climate model:** GBIF sampling bias and climate-model disagreement remain; see scenario ranges. Suitable habitat is not abundance, a population trend or extinction risk.\n"
                     "- **Chemical Twins:** LOTUS coverage varies; chemical similarity is not medicinal equivalence. Nothing here is medical advice.")

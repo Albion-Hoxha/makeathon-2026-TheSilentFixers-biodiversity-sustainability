@@ -1,29 +1,29 @@
-taxon,status,accepted_name,gbif_key,source,retrieved
-Arnica chamissonis,Not Evaluated,Arnica chamissonis,5405938,GBIF copy of the IUCN Red List checklist,2026-11-06
-Arnica longifolia,Not Evaluated,Arnica longifolia,5405970,GBIF copy of the IUCN Red List checklist,2026-11-06
-Arnica montana,Least Concern,Arnica montana,5405976,GBIF copy of the IUCN Red List checklist,2026-11-06
-Echinacea angustifolia,Not Evaluated,Echinacea angustifolia,3150933,GBIF copy of the IUCN Red List checklist,2026-11-06
-Gentiana lutea,Not Evaluated,Gentiana lutea,3170040,GBIF copy of the IUCN Red List checklist,2026-11-06
-Gentiana orbicularis,Not Evaluated,Gentiana orbicularis,3839551,GBIF copy of the IUCN Red List checklist,2026-11-06
-Gentianella campestris,Not Evaluated,Gentianella campestris,7270427,GBIF copy of the IUCN Red List checklist,2026-11-06
-Gentianella serotina,Not Evaluated,Gentianella serotina,3840114,GBIF copy of the IUCN Red List checklist,2026-11-06
-Gentianopsis barbata,Not Evaluated,Gentianopsis barbata,7270652,GBIF copy of the IUCN Red List checklist,2026-11-06
-Gentianopsis barbellata,Not Evaluated,Gentianopsis barbellata,3169923,GBIF copy of the IUCN Red List checklist,2026-11-06
-Hypericum androsaemum,Not Evaluated,Hypericum androsaemum,3189525,GBIF copy of the IUCN Red List checklist,2026-11-06
-Hypericum maculatum,Not Evaluated,Hypericum maculatum,6437017,GBIF copy of the IUCN Red List checklist,2026-11-06
-Hypericum olympicum,Not Evaluated,Hypericum olympicum,8021567,GBIF copy of the IUCN Red List checklist,2026-11-06
-Hypericum perfoliatum,Not Evaluated,Hypericum perfoliatum,7678225,GBIF copy of the IUCN Red List checklist,2026-11-06
-Hypericum perforatum,Not Evaluated,Hypericum perforatum,3189486,GBIF copy of the IUCN Red List checklist,2026-11-06
-Hypericum tomentosum,Not Evaluated,Hypericum tomentosum,8204291,GBIF copy of the IUCN Red List checklist,2026-11-06
-Ocimum basilicum,Not Evaluated,Ocimum basilicum,2927096,GBIF copy of the IUCN Red List checklist,2026-11-06
-Ocimum gratissimum,Not Evaluated,Ocimum gratissimum,2927094,GBIF copy of the IUCN Red List checklist,2026-11-06
-Origanum dictamnus,Least Concern,Origanum dictamnus,3894972,GBIF copy of the IUCN Red List checklist,2026-11-06
-Origanum vulgare,Not Evaluated,Origanum vulgare,2926612,GBIF copy of the IUCN Red List checklist,2026-11-06
-Rosmarinus officinalis,Not Evaluated,Salvia rosmarinus,10902460,GBIF copy of the IUCN Red List checklist,2026-11-06
-Salvia fruticosa,Not Evaluated,Salvia fruticosa,6412283,GBIF copy of the IUCN Red List checklist,2026-11-06
-Salvia officinalis,Least Concern,Salvia officinalis,2927004,GBIF copy of the IUCN Red List checklist,2026-11-06
-Salvia tomentosa,Not Evaluated,Salvia tomentosa,3885499,GBIF copy of the IUCN Red List checklist,2026-11-06
-Saussurea involucrata,Not Evaluated,Saussurea involucrata,5404194,GBIF copy of the IUCN Red List checklist,2026-11-06
-Taraxacum officinale,Not Evaluated,Taraxacum officinale,5394163,GBIF copy of the IUCN Red List checklist,2026-11-06
-Thymus longicaulis,Not Evaluated,Thymus longicaulis,7307062,GBIF copy of the IUCN Red List checklist,2026-11-06
-Thymus longiflorus,Not Evaluated,Thymus longiflorus,7307056,GBIF copy of the IUCN Red List checklist,2026-11-06
+taxon,status,status_gbif,accepted_name,gbif_key,status_wikidata,source,retrieved
+Arnica chamissonis,Not Evaluated,Not Evaluated,Arnica chamissonis,5405938,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Arnica longifolia,Not Evaluated,Not Evaluated,Arnica longifolia,5405970,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Arnica montana,Least Concern,Least Concern,Arnica montana,5405976,Least Concern,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Echinacea angustifolia,Not Evaluated,Not Evaluated,Echinacea angustifolia,3150933,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Gentiana lutea,Not Evaluated,Not Evaluated,Gentiana lutea,3170040,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Gentiana orbicularis,Not Evaluated,Not Evaluated,Gentiana orbicularis,3839551,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Gentianella campestris,Not Evaluated,Not Evaluated,Gentianella campestris,7270427,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Gentianella serotina,Not Evaluated,Not Evaluated,Gentianella serotina,3840114,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Gentianopsis barbata,Not Evaluated,Not Evaluated,Gentianopsis barbata,7270652,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Gentianopsis barbellata,Not Evaluated,Not Evaluated,Gentianopsis barbellata,3169923,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Hypericum androsaemum,Not Evaluated,Not Evaluated,Hypericum androsaemum,3189525,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Hypericum maculatum,Not Evaluated,Not Evaluated,Hypericum maculatum,6437017,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Hypericum olympicum,Not Evaluated,Not Evaluated,Hypericum olympicum,8021567,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Hypericum perfoliatum,Not Evaluated,Not Evaluated,Hypericum perfoliatum,7678225,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Hypericum perforatum,Not Evaluated,Not Evaluated,Hypericum perforatum,3189486,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Hypericum tomentosum,Not Evaluated,Not Evaluated,Hypericum tomentosum,8204291,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Ocimum basilicum,Not Evaluated,Not Evaluated,Ocimum basilicum,2927096,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Ocimum gratissimum,Not Evaluated,Not Evaluated,Ocimum gratissimum,2927094,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Origanum dictamnus,sources disagree,Least Concern,Origanum dictamnus,3894972,Near Threatened,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Origanum vulgare,Not Evaluated,Not Evaluated,Origanum vulgare,2926612,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Rosmarinus officinalis,Not Evaluated,Not Evaluated,Salvia rosmarinus,10902460,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Salvia fruticosa,Not Evaluated,Not Evaluated,Salvia fruticosa,6412283,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Salvia officinalis,Least Concern,Least Concern,Salvia officinalis,2927004,Least Concern,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Salvia tomentosa,Not Evaluated,Not Evaluated,Salvia tomentosa,3885499,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Saussurea involucrata,Not Evaluated,Not Evaluated,Saussurea involucrata,5404194,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Taraxacum officinale,Not Evaluated,Not Evaluated,Taraxacum officinale,5394163,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Thymus longicaulis,Not Evaluated,Not Evaluated,Thymus longicaulis,7307062,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06
+Thymus longiflorus,Not Evaluated,Not Evaluated,Thymus longiflorus,7307056,,GBIF copy of the IUCN checklist + Wikidata P141 (global assessments only),2026-11-06

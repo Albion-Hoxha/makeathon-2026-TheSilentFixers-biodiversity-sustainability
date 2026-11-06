@@ -25,3 +25,11 @@ def test_missing_category_is_reported_not_invented(monkeypatch):
                         R({}) if path == "species/5" else R({}, ok=False))
     r = fetch_iucn.lookup("X y")
     assert r["status"] == "not in GBIF IUCN checklist"
+
+
+def test_reconcile_never_guesses_when_sources_conflict():
+    r = fetch_iucn.reconcile
+    assert r("Least Concern", None) == "Least Concern"           # Wikidata has nothing: keep GBIF
+    assert r("Least Concern", "least concern") == "Least Concern"  # agree
+    assert r("Least Concern", "Near Threatened") == "sources disagree"
+    assert r("Not Evaluated", "Vulnerable") == "sources disagree"  # one source stale
