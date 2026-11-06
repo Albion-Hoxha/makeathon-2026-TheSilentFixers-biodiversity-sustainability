@@ -123,7 +123,7 @@ python -m pytest -q                   # tests on synthetic data
 streamlit run app/app.py              # dashboard
 ```
 
-The repository already contains the outputs of these steps, so the dashboard runs right after `pip install` without any download. On Windows use `py -m` instead of `python -m`, for example `py -m streamlit run app/app.py`.
+The repository already contains the outputs of these steps, so the dashboard runs right after `pip install` without any download. On Windows use `py -m` instead of `python -m`, for example `py -m streamlit run app/app.py`. On its first run Streamlit asks for an email address: press Enter to skip. (In a non-interactive shell, such as CI, add `--server.headless true` to the `streamlit run` command to skip the prompt.)
 
 **Climate rasters (not in git).** Download WorldClim 2.1 bioclimatic variables at 2.5 arc-minutes for the current climate and CMIP6 2041–2060 for SSP2-4.5 and SSP5-8.5. Each file must be one multi-band GeoTIFF with the 19 variables in the order bio1 to bio19 (stack `bio_1 … bio_19` numerically, not alphabetically). Save as `data/climate/current.tif` and `data/climate/future_<scenario>_<gcm>.tif`, for example `future_ssp245_MIROC6.tif`.
 
