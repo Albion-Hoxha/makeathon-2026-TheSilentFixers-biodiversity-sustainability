@@ -7,7 +7,7 @@
 | | |
 |---|---|
 | Devpost | https://devpost.com/software/vanishing-apothecary-climate-risk-chemical-twins |
-| Pitch video | [add the YouTube link after upload] |
+| Pitch video | [Watch on YouTube](https://youtu.be/jHiG3CBmrUU) |
 | Slides | [add the link after upload] |
 | Live dashboard | [add the link, or run it locally: see Quick start] |
 
@@ -66,7 +66,7 @@ Real screenshots of the running dashboard (data as of 2026-11-06):
 
 More: [species explorer](docs/screenshots/03_species_explorer.jpg), [overview, lower part](docs/screenshots/02_overview_lower.jpg), [data and methods](docs/screenshots/07_data_and_methods.jpg).
 
-Demo video: [add the YouTube link after upload]
+Demo video: [Watch on YouTube](https://youtu.be/gniCswPyGHs)
 
 The dashboard shows a yellow **SAMPLE DATA** banner whenever it falls back to placeholder files.
 
