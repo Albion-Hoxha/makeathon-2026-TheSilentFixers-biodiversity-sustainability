@@ -9,7 +9,7 @@
 | Devpost | https://devpost.com/software/vanishing-apothecary-climate-risk-chemical-twins |
 | Pitch video | [Watch on YouTube](https://youtu.be/jHiG3CBmrUU) |
 | Slides | [add the link after upload] |
-| Live dashboard | [vanishing-apothecary.streamlit.app](https://vanishing-apothecary.streamlit.app/) ||
+| Live dashboard | [vanishing-apothecary.streamlit.app](https://vanishing-apothecary.streamlit.app/) |
 
 ---
 
